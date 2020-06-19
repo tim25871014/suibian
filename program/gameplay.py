@@ -39,6 +39,11 @@ class ChessBoard:
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5},
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5}
         ] # list dict(死亡棋種 -> int)
+    def stoneOnLocation(self, loc):
+        if self.typeOnLocation.__contains__(loc):
+            return self.typeOnLocation[loc]
+        else:
+            return 0
     def isLegal(self, move):
         a = 1
     def kill(self, locate):

@@ -32,7 +32,9 @@ textbox = TextBox(140, 459)
 # gameplay
 brd = ChessBoard()
 isFirst = False
-onClick = (-1, -1)
+isYourTurn = True
+selected = 0
+onFocus = (-1, -1)
 
 # program
 Program = True
@@ -118,8 +120,8 @@ while Program:
         word_opponent.render(screen)
         word_player.render(screen)
 
-        if onClick != (-1, -1):
-            screen.blit(focus, coor_of_point(onClick))
+        if onFocus != (-1, -1):
+            screen.blit(focus, coor_of_point(onFocus))
 
         brd.render(screen)
         pg.display.update()
@@ -129,7 +131,13 @@ while Program:
                 Program = False
             if event.type == pg.MOUSEBUTTONDOWN:
                 mouseloc = pg.mouse.get_pos()
-                onClick = nearest_point(mouseloc)
+                if onFocus == nearest_point(mouseloc):
+                    selected = 0
+                    onFocus = (-1, -1)
+                else:
+                    selected = brd.stoneOnLocation(nearest_point(mouseloc))
+                    onFocus = nearest_point(mouseloc)
+                    print(selected)
 
     main_clock.tick(FPS)
     
