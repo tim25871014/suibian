@@ -40,21 +40,57 @@ class ChessBoard:
         ] # list dict(死亡棋種 -> int)
     def isLegal(self, move):
         a = 1
+    def kill(self, locate):
+        st = self.typeOnLocation[locate]
+        if st.isActive == 0 and st.type == 'shi':
+            self.shiNum += 1
+            if shiNum == 2:
+                st.type = 'swordman'
+        self.deathCount[st.type] += 1
+        del self.typeOnLocation[locate]
+    def hurt(self, locate):#扣一滴血，回傳是否死亡
+        self.typeOnLocation[locate].hp -= 1
+        if self.typeOnLocation[locate].hp == 0:
+            kill(self,locate)
+            return 1
+        return 0
+    def open(self, locate):
+        self.typeOnLocation[move.location].isActive = 1
+        if self.typeOnLocation[move.location].type == 'shi':
+            self.shiNum += 1
+            if self.shiNum == 2:
+                self.typeOnLocation[move.location].type = 'swordman'
+    def transfer(self, locate1, locate2):#把棋從locate1 動到 locate2
+        
+
     def makeMove(self, move):
         st = self.typeOnLocation[move.location]
         if self.xianRecover[0] >= 0:
             self.typeOnLocation[self.xianRecover].hp += 1
             self.xianRecover = (-1,-1)
         if st.isActive == 0: #翻棋
-            self.typeOnLocation[move.location].isActive = 1
-            if self.typeOnLocation[move.location].stype == 'shi':
-                shiNum += 1
-                if shiNum == 2:
-                    self.typeOnLocation[move.location].stype = 'swordman'
+            open(self,move.location)
             return
         if st.action == 'skill': #技能
-            if st.stype == 'soldier':
-                if move.objects[0] == move.location:
+            if st.type == 'soldier':
+                if move.objects[0] == move.location: # 犧牲救人
+                    self.deathcount[st.type] += st.hp
+                    self.deathcount[move.summon] -= 1
+                    self.typeOnLocation[move.location] = move.summon
+                else: # 召喚到旁
+                    self.typeOnLocation[move.dest] = self.typeOnLocation[move.objects[0]]
+                    del self.typeOnLocation[move.objects[0]]
+            elif st.type == 'xiang':
+                if move.objects[0] == move.location:# 回血
+                    self.xianRecover = move.location
+                else:#衝撞
+                    nx = (move.dest[0] - move.location[0])/2
+                    ny = (move.dest[1] - move.location[1])/2
+                    self.typeOnLocation[move.dest] = st
+                    del self.typeOnLocation[move.objects[0]]
+
+                
+
     def isWin(self):
         a = 1
 
