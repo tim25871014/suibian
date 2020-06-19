@@ -1,4 +1,5 @@
 import pygame as pg
+from positioning import *
 
 # settings
 FPS = 60
@@ -19,4 +20,5 @@ while Program:
             Program = False
         if event.type == pg.MOUSEMOTION:
             print(pg.mouse.get_pos())
+            print(nearest_point(pg.mouse.get_pos()))
     main_clock.tick(FPS)

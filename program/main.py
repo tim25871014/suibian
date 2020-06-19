@@ -2,6 +2,7 @@ import pygame as pg
 from elements import *
 from gameplay import *
 from network import *
+from positioning import *
 
 # settings
 FPS = 60
@@ -25,11 +26,13 @@ hintcancel = RoundButton('cross.png', 'cross_act.png', 50, 241)
 word_waiting = MessageBox('word_waiting.png', 113, 14)
 word_opponent = MessageBox('word_opponent.png', 113, 14)
 word_player = MessageBox('word_player.png', 262, 594)
+focus = loadimg('focus.png')
 textbox = TextBox(140, 459)
 
 # gameplay
 brd = ChessBoard()
 isFirst = False
+onClick = (-1, -1)
 
 # program
 Program = True
@@ -100,6 +103,7 @@ while Program:
     elif Stage == 'WaitingConnection':
         setbackground('board.png', screen)
         word_waiting.render(screen)
+        word_player.render(screen)
         pg.display.update()
         isConnected = network.load() # get 0 if opponent connected
         if(isConnected == 0):
@@ -113,15 +117,19 @@ while Program:
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
+
+        if onClick != (-1, -1):
+            screen.blit(focus, coor_of_point(onClick))
+
         brd.render(screen)
         pg.display.update()
+
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 Program = False
             if event.type == pg.MOUSEBUTTONDOWN:
-                a = 1
-            if event.type == pg.MOUSEMOTION:
-                a = 1
+                mouseloc = pg.mouse.get_pos()
+                onClick = nearest_point(mouseloc)
 
     main_clock.tick(FPS)
     

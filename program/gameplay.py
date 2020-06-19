@@ -1,4 +1,5 @@
 import pygame as pg
+from positioning import *
 
 def loadimg(filename):
     imgsrc = '../pictures/'
@@ -61,7 +62,7 @@ class ChessBoard:
             if self.shiNum == 2:
                 self.typeOnLocation[move.location].type = 'swordman'
     def transfer(self, locate1, locate2):#把棋從locate1 動到 locate2
-        
+        a = 1
 
     def makeMove(self, move):
         st = self.typeOnLocation[move.location]
@@ -122,4 +123,4 @@ class ChessBoard:
             if self.typeOnLocation[p].isActive == False:
                 picname = 'back'
             pic = loadimg(prefix + picname + '.png')
-            screen.blit(pic, (33 + p[0]*49.375, 86 + p[1]*49.666))
+            screen.blit(pic, coor_of_point(p))
