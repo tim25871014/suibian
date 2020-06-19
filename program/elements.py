@@ -1,21 +1,16 @@
 import pygame as pg
-from network import *
-
-FPS = 60
-pg.init()
-main_clock = pg.time.Clock()
-width, height = 522, 675  # fixed
-screen = pg.display.set_mode((width, height))
-pg.display.set_caption('Wang Zheng Chess DX')
-network = Network()
 
 def loadimg(filename):
     imgsrc = '../pictures/'
     return pg.image.load(imgsrc + filename).convert_alpha()
 
-class TextBox(pg.sprite.Sprite):
+def setbackground(filename, screen):
+    imgsrc = '../pictures/'
+    background = pg.image.load(imgsrc + filename).convert_alpha()
+    screen.blit(background, (0, 0))
+
+class TextBox:
     def __init__(self, top, left):
-        super().__init__()
         self.validChars = "1234567890"
         self.text = ''
         self.font = pg.font.Font(None, 100)
@@ -30,35 +25,27 @@ class TextBox(pg.sprite.Sprite):
         self.text = self.text[:-1]
     def reset(self):
         self.text = ''
-    def render(self):
+    def render(self, screen):
         self.image = self.font.render(self.text + '|', False, [0, 0, 0])
         screen.blit(self.image, self.rect)
 
-class Stone(pg.sprite.Sprite):
-    def __init__(self, picture):
-        super().__init__()
-        self.image = loadimg(picture)
-        self.rect = self.image.get_rect()
-
-class Button(pg.sprite.Sprite):
+class Button:
     def __init__(self, picture, picture_active, top, left):
-        super().__init__()
         self.image = loadimg(picture)
         self.image_active = loadimg(picture_active)
         self.rect = (top, left)
         self.isActive = False
-    def render(self):
+    def render(self, screen):
         if self.isActive:
             screen.blit(self.image_active, self.rect)
         else:
             screen.blit(self.image, self.rect)
 
-class MessageBox(pg.sprite.Sprite):
+class MessageBox:
     def __init__(self, picture, top, left):
-        super().__init__()
         self.image = loadimg(picture)
         self.rect = (top, left)
-    def render(self):
+    def render(self, screen):
         screen.blit(self.image, self.rect)
 
 class StartingButton(Button):

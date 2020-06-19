@@ -1,6 +1,20 @@
 import pygame as pg
 from elements import *
+from gameplay import *
+from network import *
 
+# settings
+FPS = 60
+pg.init()
+main_clock = pg.time.Clock()
+width, height = 522, 675  # fixed
+screen = pg.display.set_mode((width, height))
+pg.display.set_caption('Wang Zheng Chess DX')
+
+# connection
+network = Network()
+
+# elements
 background = loadimg('start.png')
 board = loadimg('board.png')
 multi = StartingButton('multi.png', 'multi_act.png', 44, 270)
@@ -8,19 +22,26 @@ single = StartingButton('single.png', 'single_act.png', 44, 380)
 rules = StartingButton('rules.png', 'rules_act.png', 44, 490)
 hintbox = MessageBox('entercode.png', 44, 240)
 hintcancel = RoundButton('cross.png', 'cross_act.png', 50, 241)
+word_waiting = MessageBox('word_waiting.png', 113, 14)
+word_opponent = MessageBox('word_opponent.png', 113, 14)
+word_player = MessageBox('word_player.png', 262, 594)
 textbox = TextBox(140, 459)
 
-Program = True
+# gameplay
+brd = ChessBoard()
 isFirst = False
+
+# program
+Program = True
 Stage = 'Lobby' # 'Lobby', 'EnterCode', 'ShowRules', 'WaitingConnection', 'GameStart'
 
 while Program:
 
     if Stage == 'Lobby':
-        screen.blit(background, (0, 0))
-        multi.render()
-        single.render()
-        rules.render()
+        setbackground('start.png', screen)
+        multi.render(screen)
+        single.render(screen)
+        rules.render(screen)
         pg.display.update()
 
         for event in pg.event.get():
@@ -40,12 +61,20 @@ while Program:
                 if single.isActive:
                     ThisFeature = 'WIP'
                     print(ThisFeature)
-
-    elif Stage == 'EnterCode':
+    elif Stage == 'ShowRules':
         screen.blit(background, (0, 0))
-        hintbox.render()
-        hintcancel.render()
-        textbox.render()
+        hintbox.render(screen)
+        pg.display.update()
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                Program = False
+                
+    elif Stage == 'EnterCode':
+        setbackground('start.png', screen)
+        hintbox.render(screen)
+        hintcancel.render(screen)
+        textbox.render(screen)
         pg.display.update()
 
         for event in pg.event.get():
@@ -69,24 +98,30 @@ while Program:
                         network.send(textbox.text)
                         Stage = 'WaitingConnection'
     elif Stage == 'WaitingConnection':
-        screen.blit(board, (0, 0))
+        setbackground('board.png', screen)
+        word_waiting.render(screen)
         pg.display.update()
-        isConnected = network.load()
-        print(isConnected) # get 0, or -1 for no opponent connected
+        isConnected = network.load() # get 0 if opponent connected
         if(isConnected == 0):
             isFirst = network.load()
-            print('8888888')
             Stage = 'Gamestart'
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 Program = False
     elif Stage == 'Gamestart':
-        screen.blit(board, (0, 0))
-        print(isFirst)
+        # isFirst
+        setbackground('board.png', screen)
+        word_opponent.render(screen)
+        word_player.render(screen)
+        brd.render(screen)
         pg.display.update()
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 Program = False
+            if event.type == pg.MOUSEBUTTONDOWN:
+                a = 1
+            if event.type == pg.MOUSEMOTION:
+                a = 1
 
     main_clock.tick(FPS)
     
