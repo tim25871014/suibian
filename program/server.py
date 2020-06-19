@@ -55,7 +55,7 @@ def threaded_client(conn, player):
             dic[code].step[idx] = pickle.loads(conn.recv(2048))
             dic[code].stage = 5
         elif dic[code].stage != (idx + 4):
-            sleep(0.3)
+            time.sleep(0.3)
             conn.send(pickle.dumps(-1))
         else:
             conn.send(pickle.dumps(0))
