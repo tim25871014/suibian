@@ -41,20 +41,20 @@ class ChessBoard:
     def isLegal(self, move):
         a = 1
     def makeMove(self, move):
-        a = 1
-        """
-        # 2
         st = self.typeOnLocation[move.location]
         if self.xianRecover[0] >= 0:
             self.typeOnLocation[self.xianRecover].hp += 1
             self.xianRecover = (-1,-1)
-        if st.isActive == 0:
+        if st.isActive == 0: #翻棋
             self.typeOnLocation[move.location].isActive = 1
+            if self.typeOnLocation[move.location].stype == 'shi':
+                shiNum += 1
+                if shiNum == 2:
+                    self.typeOnLocation[move.location].stype = 'swordman'
             return
-        if st.action == 'skill':
+        if st.action == 'skill': #技能
             if st.stype == 'soldier':
                 if move.objects[0] == move.location:
-        """
     def isWin(self):
         a = 1
 
