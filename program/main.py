@@ -131,6 +131,7 @@ while Program:
                 Program = False
             if event.type == pg.MOUSEBUTTONDOWN:
                 mouseloc = pg.mouse.get_pos()
+                print(nearest_grave(mouseloc))
                 if onFocus == nearest_point(mouseloc):
                     selected = 0
                     onFocus = (-1, -1)
