@@ -62,7 +62,7 @@ class ChessBoard:
         del self.typeOnLocation[locate]
         if st.type == 'king':
             self.kill(source,source)
-    def hurt(self, locate,source):#扣一滴血，回傳是否死亡
+    def hurt(self, locate, source):#扣一滴血，回傳是否死亡
         if self.typeOnLocation[locate].type == 'chema':
             self.typeOnLocation[locate].type = 'ma'
             self.deathCount['che'] += 1
@@ -109,7 +109,7 @@ class ChessBoard:
                     self.deathcount[move.summon] -= 1
                     self.typeOnLocation[move.location] = move.summon
                 else: # 召喚到旁
-                     self.transfer(move.objects[0],move.dest)
+                    self.transfer(move.objects[0],move.dest)
                     del self.typeOnLocation[move.objects[0]]
             elif st.type == 'xiang':
                 if move.objects[0] == move.location:# 回血

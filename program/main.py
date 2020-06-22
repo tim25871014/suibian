@@ -39,6 +39,7 @@ onFocus = (-1, -1)
 # program
 Program = True
 Stage = 'Lobby' # 'Lobby', 'EnterCode', 'ShowRules', 'WaitingConnection', 'GameStart'
+Step = 'Focus' # 'Waiting', 'Focus', 'First', 'Second', 'Third', 'Forth'
 
 while Program:
 
@@ -120,26 +121,137 @@ while Program:
         word_opponent.render(screen)
         word_player.render(screen)
 
-        if onFocus != (-1, -1):
+        if Step == 'Waiting':
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    Program = False
+            Step = 'Focus'
+
+        elif Step == 'Focus':
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    Program = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    mouseloc = pg.mouse.get_pos()
+                    selected = brd.stoneOnLocation(nearest_point(mouseloc))
+                    onFocus = nearest_point(mouseloc)
+            if onFocus[0] != -1 and selected != 0 and (selected.owner == 0 or not selected.isActive):
+                if selected.type == 'back':
+                    a = 1
+                    # open the covered stone
+                    Step = 'Waiting'
+                else:
+                    Step = 'First'
+
+        elif Step == 'First':
             screen.blit(focus, coor_of_point(onFocus))
+
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    Program = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    mouseloc = pg.mouse.get_pos()
+                    selected2 = brd.stoneOnLocation(nearest_point(mouseloc))
+                    onFirst = nearest_point(mouseloc)
+
+            if onFocus[0] != -1 or onFocus[1] != -1:
+
+                if selected.type == 'king':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.type == 'back':
+                        # eat the covered stone 
+                        Step = 'Waiting'
+                    elif selected2.owner == 1:
+                        # eat the selected2
+                        Step = 'Waiting'
+                        
+                if selected.type == 'shi':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    if onFirst[0] == -1 and onFirst[1] >= 8:
+                        # relive
+
+                if selected.type == 'swordman':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    if selected2.owner == 1:
+                        # kill
+
+                if selected.type == 'xiang':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.owner == 1:
+                        # eat the selected 2
+
+                if selected.type == 'che':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.owner == 1:
+                        # eat the selected 2
+                    elif selected2.owner == 0 and selected2.type == 'ma':
+                        # make mache
+
+                if selected.type == 'ma':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.owner == 1:
+                        # eat the selected 2
+                    elif selected2.owner == 0 and selected2.type == 'che':
+                        # make mache
+
+                if selected.type == 'pao':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.owner == 0:
+                        # use the seleted2 as a bomb
+
+                if selected.type == 'soldier':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.owner == 1:
+                        # eat the selected 2
+                    elif selected2.owner == 0 and selected2.type == 'soldier':
+                        # teleport the seleted2
 
         brd.render(screen)
         pg.display.update()
 
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                Program = False
-            if event.type == pg.MOUSEBUTTONDOWN:
-                mouseloc = pg.mouse.get_pos()
-                print(nearest_grave(mouseloc))
-                if onFocus == nearest_point(mouseloc):
-                    selected = 0
-                    onFocus = (-1, -1)
-                else:
-                    selected = brd.stoneOnLocation(nearest_point(mouseloc))
-                    onFocus = nearest_point(mouseloc)
-                    print(selected)
-
     main_clock.tick(FPS)
     
 pg.quit()
+
+
+"""
+if onFocus != (-1, -1):
+    if onFocus[0] == -1:
+        small_focus = pg.transform.scale(focus, (31, 31))
+        screen.blit(small_focus, coor_of_point(onFocus))
+    else:
+        screen.blit(focus, coor_of_point(onFocus))
+
+brd.render(screen)
+pg.display.update()
+
+for event in pg.event.get():
+    if event.type == pg.QUIT:
+        Program = False
+    if event.type == pg.MOUSEBUTTONDOWN:
+        mouseloc = pg.mouse.get_pos()
+        if onFocus == nearest_point(mouseloc):
+            selected = 0
+            onFocus = (-1, -1)
+        else:
+            selected = brd.stoneOnLocation(nearest_point(mouseloc))
+            onFocus = nearest_point(mouseloc)
+            print(onFocus)
+            print(selected)
+"""
