@@ -86,8 +86,9 @@ class ChessBoard:
             if self.shiNum == 2:
                 self.typeOnLocation[move.location].type = 'swordman'
     def transfer(self, locate1, locate2):#把棋從locate1 動到 locate2
-         self.typeOnLocation[locate2] = self.typeOnLocation[locate1]
-        del self.typeOnLocation[locate1]
+        if locate1 in self.typeOnLocation:
+            self.typeOnLocation[locate2] = self.typeOnLocation[locate1]
+            del self.typeOnLocation[locate1]
     def inside(self,locate):
         if locate[0] >= 0 and locate[0] < 10 and locate[1] >= 0 and locate[0] < 9:
             return True
@@ -150,8 +151,17 @@ class ChessBoard:
                 self.kill(move.dest,move.location)
                 if inside((move.dest[0]+nx,move.dest[1]+ny)):
                     self.kill((move.dest[0]+nx,move.dest[1]+ny),move.location)
-
-                
+        else:#走或吃
+            if move.dest in self.typeOnLocation:#吃
+                if st.type == 'king':
+                    if self.typeOnLocation[move.dest].isActive == 0:
+                        self.open()
+                    else:
+                        self.kill(move.dest,move.location)
+                    self.transfer(move.location,move.dest)
+            else:#走
+                transfer(move.location,move.dest)
+            
 
     def isWin(self):
         a = 1
