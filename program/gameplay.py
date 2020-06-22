@@ -176,29 +176,29 @@ class ChessBoard:
                         if die.type == 'shi' and self.shiNum == 0:
                             self.kill(move.location,move.location)
                     self.transfer(move.location,move.dest)
-                else if st.type == 'che':
+                elif st.type == 'che':
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
                     else:
                         self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
-                else if st.type == 'chema' or st.type == 'mache':
+                elif st.type == 'chema' or st.type == 'mache':
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
                         return
-                    else if self.hurt(move.dest,move.location):
+                    elif self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
                         return
                     self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
-                else if st.type == 'soldier':
+                elif st.type == 'soldier':
                     for i in range(0,st.hp):
                         if self.hurt(move.dest,move.location):
                             self.transfer(move.location,move.dest)
                             return
-                else if st.type == 'xiang' and st.hp == 2:
+                elif st.type == 'xiang' and st.hp == 2:
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
                         return
-                    else if self.hurt(move.dest,move.location):
+                    elif self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
                         return
                 else:
