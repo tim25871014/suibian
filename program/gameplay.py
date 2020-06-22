@@ -1,4 +1,5 @@
 import pygame as pg
+from positioning import *
 
 def loadimg(filename):
     imgsrc = '../pictures/'
@@ -30,7 +31,8 @@ class ChessBoard:
             (0, 0): Stone('xiang', 1, 0, True),
             (0, 9): Stone('xiang', 1, 0, True),
             (8, 0): Stone('xiang', 1, 0, True),
-            (8, 9): Stone('xiang', 1, 0, True)
+            (8, 9): Stone('xiang', 1, 0, True),
+            (7, 9): Stone('xiang', 1, 0, True)
         } # map 座標 -> Stone
         self.shiNum = 0
         self.xianRecover = (-1,-1)
@@ -38,38 +40,25 @@ class ChessBoard:
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5},
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5}
         ] # list dict(死亡棋種 -> int)
+    def stoneOnLocation(self, loc):
+        if self.typeOnLocation.__contains__(loc):
+            return self.typeOnLocation[loc]
+        else:
+            return 0
     def isLegal(self, move):
         a = 1
-    def kill(self, locate,source):
-        if locate not in self.typeOnLocation:
-            return 0
+    def kill(self, locate):
         st = self.typeOnLocation[locate]
         if st.isActive == 0 and st.type == 'shi':
             self.shiNum += 1
             if shiNum == 2:
                 st.type = 'swordman'
-        if st.type == 'soldier':
-            self.deathCount[st.type] += st.hp
-        else:
-            self.deathCount[st.type] += 1
+        self.deathCount[st.type] += 1
         del self.typeOnLocation[locate]
-        if st.type == 'king':
-            self.kill(source,source)
-    def hurt(self, locate,source):#扣一滴血，回傳是否死亡
-        if self.typeOnLocation[locate].type == 'chema':
-            self.typeOnLocation[locate].type = 'ma'
-            self.deathCount['che'] += 1
-            return 0
-        if self.typeOnLocation[locate].type == 'mache':
-            self.typeOnLocation[locate].type = 'che'
-            self.deathCount['ma'] += 1
-            return 0
-        
+    def hurt(self, locate):#扣一滴血，回傳是否死亡
         self.typeOnLocation[locate].hp -= 1
-        if self.typeOnLocation[locate].type == 'soldier':
-            self.deathCount[st.type] += 1
         if self.typeOnLocation[locate].hp == 0:
-            kill(self,locate,source)
+            kill(self,locate)
             return 1
         return 0
     def open(self, locate):
@@ -79,19 +68,15 @@ class ChessBoard:
             if self.shiNum == 2:
                 self.typeOnLocation[move.location].type = 'swordman'
     def transfer(self, locate1, locate2):#把棋從locate1 動到 locate2
-        self.typeOnLocation[locate2] = self.typeOnLocation[locate1]
-        del self.typeOnLocation[locate1]
-    def inside(self,locate):
-        if locate[0] >= 0 and locate[0] < 10 and locate[1] >= 0 and locate[0] < 9:
-            return True
-        return False
+        a = 1
+
     def makeMove(self, move):
         st = self.typeOnLocation[move.location]
         if self.xianRecover[0] >= 0:
             self.typeOnLocation[self.xianRecover].hp += 1
             self.xianRecover = (-1,-1)
         if st.isActive == 0: #翻棋
-            self.open(move.location)
+            open(self,move.location)
             return
         if st.action == 'skill': #技能
             if st.type == 'soldier':
@@ -100,7 +85,7 @@ class ChessBoard:
                     self.deathcount[move.summon] -= 1
                     self.typeOnLocation[move.location] = move.summon
                 else: # 召喚到旁
-                    self.transfer(move.objects[0],move.dest)
+                    self.typeOnLocation[move.dest] = self.typeOnLocation[move.objects[0]]
                     del self.typeOnLocation[move.objects[0]]
             elif st.type == 'xiang':
                 if move.objects[0] == move.location:# 回血
@@ -108,34 +93,8 @@ class ChessBoard:
                 else:#衝撞
                     nx = (move.dest[0] - move.location[0])/2
                     ny = (move.dest[1] - move.location[1])/2
-                    self.transfer(move.location,move.dest)
-                    self.hurt(move.dest,move.dest)
-                    if inside((move.dest[0]+nx,move.dest[1])):
-                        self.kill((move.dest[0]+nx,move.dest[1]),move.dest)
-                    if inside((move.dest[0],move.dest[1]+ny)):
-                        self.kill((move.dest[0],move.dest[1]+ny),move.dest)
-                    if inside((move.dest[0]+nx,move.dest[1]+ny)):
-                        self.kill((move.dest[0]+nx,move.dest[1]+ny),move.dest)
-            elif st.type == 'king':#將衝到指定位置
-                self.kill(objects[0],move.location)
-                self.kill(objects[1],move.location)
-                nx = (move.dest[0] - move.location[0])/2
-                ny = (move.dest[1] - move.location[1])/2
-                nowx = move.location[0]
-                nowy = move.location[1]
-                while not (nowx == move.dest[0] and nowy == move.dest[1]):
-                    nowx += nx
-                    nowy += ny
-                    self.kill((nowx,nowy),move.location)
-                self.transfer(move.location,move.dest)
-            elif st.type == 'shi':
-                self.deathcount[move.summon] -= 1
-                self.typeOnLocation[move.dest] = move.summon
-            elif st.type == 'swordman':
-                self.kill(move.dest)
-            elif st.type == 'pao':
-                
-
+                    self.typeOnLocation[move.dest] = st
+                    del self.typeOnLocation[move.objects[0]]
 
                 
 
@@ -170,4 +129,4 @@ class ChessBoard:
             if self.typeOnLocation[p].isActive == False:
                 picname = 'back'
             pic = loadimg(prefix + picname + '.png')
-            screen.blit(pic, (33 + p[0]*49.375, 86 + p[1]*49.666))
+            screen.blit(pic, coor_of_point(p))
