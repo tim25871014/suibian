@@ -118,6 +118,8 @@ class ChessBoard:
                     ny = (move.dest[1] - move.location[1])/2
                     self.transfer(move.location,move.dest)
                     self.hurt(move.dest,move.dest)
+                    if inside((move.dest[0],move.dest[1])):
+                        self.kill((move.dest[0],move.dest[1]),move.dest)
                     if inside((move.dest[0]+nx,move.dest[1])):
                         self.kill((move.dest[0]+nx,move.dest[1]),move.dest)
                     if inside((move.dest[0],move.dest[1]+ny)):
@@ -125,8 +127,8 @@ class ChessBoard:
                     if inside((move.dest[0]+nx,move.dest[1]+ny)):
                         self.kill((move.dest[0]+nx,move.dest[1]+ny),move.dest)
             elif st.type == 'king':#將衝到指定位置
-                self.kill(objects[0],move.location)
-                self.kill(objects[1],move.location)
+                self.kill(move.objects[0],move.location)
+                self.kill(move.objects[1],move.location)
                 nx = (move.dest[0] - move.location[0])/2
                 ny = (move.dest[1] - move.location[1])/2
                 nowx = move.location[0]
@@ -142,6 +144,12 @@ class ChessBoard:
             elif st.type == 'swordman':
                 self.kill(move.dest)
             elif st.type == 'pao':
+                self.kill(move.objects[0],move.location)
+                nx = (move.dest[0] - move.location[0])/2
+                ny = (move.dest[1] - move.location[1])/2
+                self.kill(move.dest,move.location)
+                if inside((move.dest[0]+nx,move.dest[1]+ny)):
+                    self.kill((move.dest[0]+nx,move.dest[1]+ny),move.location)
 
                 
 
