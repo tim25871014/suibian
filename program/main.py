@@ -270,7 +270,7 @@ while Program:
                             Step = 'Waiting'
                 elif selected.type == 'pao':
                     if shi_can_move(onFocus, onFirst):
-                        if selected2.owner == 0 and selected2.isActive:
+                        if selected2 != 0 and selected2.owner == 0 and selected2.isActive:
                             # select bomb (WIP)
                             Step = 'Second'
                     elif soldier_can_move(onFocus, onFirst):
@@ -282,7 +282,7 @@ while Program:
                     if skillReleased:
                         # sacrisfy
                         Step = 'Second'
-                    elif selected2.owner == 0 and selected2.type == 'soldier' and selected2.isActive:
+                    elif selected2 != 0 and selected2.owner == 0 and selected2.type == 'soldier' and selected2.isActive:
                         # teleport
                         Step = 'Second'
                     elif soldier_can_move(onFocus, onFirst):
