@@ -34,7 +34,9 @@ brd = ChessBoard()
 isFirst = False
 isYourTurn = True
 selected = 0
+selected2 = 0
 onFocus = (-1, -1)
+onFirst = (-1, -1)
 
 # program
 Program = True
@@ -166,61 +168,26 @@ while Program:
                     elif selected2.owner == 1:
                         # eat the selected2
                         Step = 'Waiting'
-                        
-                if selected.type == 'shi':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    if onFirst[0] == -1 and onFirst[1] >= 8:
-                        # relive
 
-                if selected.type == 'swordman':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    if selected2.owner == 1:
-                        # kill
-
-                if selected.type == 'xiang':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.owner == 1:
-                        # eat the selected 2
-
-                if selected.type == 'che':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.owner == 1:
-                        # eat the selected 2
-                    elif selected2.owner == 0 and selected2.type == 'ma':
-                        # make mache
-
-                if selected.type == 'ma':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.owner == 1:
-                        # eat the selected 2
-                    elif selected2.owner == 0 and selected2.type == 'che':
-                        # make mache
-
-                if selected.type == 'pao':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.owner == 0:
-                        # use the seleted2 as a bomb
-
-                if selected.type == 'soldier':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.owner == 1:
-                        # eat the selected 2
-                    elif selected2.owner == 0 and selected2.type == 'soldier':
-                        # teleport the seleted2
+                elif selected.type == 'xiang':
+                    if selected.hp == 2:
+                        if selected2 == 0:
+                            # move selected to selected2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], []))
+                            Step = 'Waiting'
+                        elif selected2.owner == 1:
+                            # eat the selected 2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], []))
+                            Step = 'Waiting'
+                    else:
+                        if selected2 == 0:
+                            # move selected to selected2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], []))
+                            Step = 'Waiting'
+                        elif selected2.owner == 1:
+                            # eat the selected 2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], []))
+                            Step = 'Waiting'
 
         brd.render(screen)
         pg.display.update()
@@ -254,4 +221,60 @@ for event in pg.event.get():
             onFocus = nearest_point(mouseloc)
             print(onFocus)
             print(selected)
+"""
+
+"""
+                elif selected.type == 'shi':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    if onFirst[0] == -1 and onFirst[1] >= 8:
+                        # relive
+                        a = 1
+
+                elif selected.type == 'swordman':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    if selected2.owner == 1:
+                        # kill
+                        a = 1
+"""
+# Move(location, action, dest, objects, summon):
+
+
+"""
+                elif selected.type == 'che':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.owner == 1:
+                        # eat the selected 2
+                    elif selected2.owner == 0 and selected2.type == 'ma':
+                        # make mache
+
+                elif selected.type == 'ma':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.owner == 1:
+                        # eat the selected 2
+                    elif selected2.owner == 0 and selected2.type == 'che':
+                        # make mache
+
+                elif selected.type == 'pao':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.owner == 0:
+                        # use the seleted2 as a bomb
+
+                elif selected.type == 'soldier':
+                    if selected2 == 0:
+                        # move selected to selected2
+                        Step = 'Waiting'
+                    elif selected2.owner == 1:
+                        # eat the selected 2
+                    elif selected2.owner == 0 and selected2.type == 'soldier':
+                        # teleport the seleted2
 """

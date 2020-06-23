@@ -28,11 +28,11 @@ class ChessBoard:
             (4, 8): Stone('soldier', 2, 1, True),
             (2, 5): Stone('king', 1, 1, False),
             (6, 3): Stone('swordman', 1, 1, True),
-            (0, 0): Stone('xiang', 1, 0, True),
-            (0, 9): Stone('xiang', 1, 0, True),
-            (8, 0): Stone('xiang', 1, 0, True),
-            (8, 9): Stone('xiang', 1, 0, True),
-            (7, 9): Stone('xiang', 1, 0, True)
+            (0, 0): Stone('xiang', 2, 0, True),
+            (0, 9): Stone('xiang', 2, 0, True),
+            (8, 0): Stone('xiang', 2, 0, True),
+            (8, 9): Stone('xiang', 2, 0, True),
+            (7, 9): Stone('xiang', 2, 0, True)
         } # map 座標 -> Stone
         self.shiNum = 0
         self.xianRecover = (-1,-1)
