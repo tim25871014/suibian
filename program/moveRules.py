@@ -21,3 +21,15 @@ def ma_can_move(onFocus, onFirst):
 
 def soldier_can_move(onFocus, onFirst):
     return (abs(onFocus[0] - onFirst[0]) == 1 and onFocus[1] == onFirst[1]) or (onFocus[0] == onFirst[0] and abs(onFocus[1] - onFirst[1]) == 1)
+
+def xiang2_can_move(onFocus, onFirst):
+    return abs(onFocus[0] - onFirst[0]) == abs(onFocus[1] - onFirst[1]) and abs(onFocus[1] - onFirst[1]) <= 2
+
+def xiang1_can_move(onFocus, onFirst):
+    return abs(onFocus[0] - onFirst[0]) == abs(onFocus[1] - onFirst[1]) and abs(onFocus[1] - onFirst[1]) <= 1
+
+def shi_can_move(onFocus, onFirst):
+    return soldier_can_move(onFocus, onFirst) or xiang1_can_move(onFocus, onFirst)
+
+def sword_can_kill(onFocus, onFirst):
+    return abs(onFocus[0] - onFirst[0]) + abs(onFocus[1] - onFocus[1]) <= 2

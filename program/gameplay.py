@@ -29,16 +29,22 @@ class ChessBoard:
             (2, 5): Stone('king', 1, 1, False),
             (6, 3): Stone('swordman', 1, 1, True),
             (0, 0): Stone('xiang', 1, 0, True),
-            (0, 9): Stone('xiang', 2, 0, True),
-            (2, 9): Stone('che', 1, 0, True),
             (3, 3): Stone('soldier', 1, 0, True),
             (3, 5): Stone('pao', 1, 0, True),
-            (8, 0): Stone('xiang', 2, 0, True),
+            (8, 0): Stone('king', 1, 0, True),
+            (0, 9): Stone('shi', 1, 0, True),
+            (1, 9): Stone('xiang', 2, 0, True),
+            (2, 9): Stone('che', 1, 0, True),
+            (3, 9): Stone('ma', 1, 0, True),
+            (4, 9): Stone('pao', 1, 0, True),
+            (5, 9): Stone('soldier', 1, 0, True),
+            (6, 9): Stone('swordman', 1, 0, True),
             (8, 9): Stone('xiang', 2, 0, True),
             (7, 9): Stone('xiang', 2, 0, True)
         } # map 座標 -> Stone
         self.shiNum = [0,0]
         self.xianRecover = (-1,-1)
+        self.namelist = ['king', 'shi', 'swordman', 'xiang', 'che', 'ma', 'pao', 'soldier']
         self.deathCount = [
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5},
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5}

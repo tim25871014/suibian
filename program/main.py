@@ -176,33 +176,53 @@ while Program:
             if onFirst[0] != -1 or onFirst[1] != -1 or skillReleased:
 
                 if selected.type == 'king':
-                    if che_can_move(onFocus, onFirst):
+                    if che_can_move(onFocus, onFirst, brd):
                         if selected2 == 0:
                             # move selected to selected2
                             brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
-                        elif not selected2.inActive:
-                            # eat the covered stone
-                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
-                            Step = 'Waiting'
                         elif selected2.owner == 1:
-                            # eat the selected2
+                            # eat the selected2 (can be covered)
                             brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
-
+                elif selected.type == 'shi':
+                    if onFirst[0] == -1 and onFirst[1] >= 8:
+                        if brd.deathcount[onFirst[1] - 8] >= 1:
+                            # summon
+                            Step == 'Second'
+                    elif shi_can_move(onFocus, onFirst):
+                        if selected2 == 0:
+                            # move selected to selected2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
+                elif selected.type == 'swordman':
+                    if sword_can_kill(onFocus, onFirst) and selected2 != 0:
+                        print('a')
+                        if selected2.owner == 1:
+                            ###########333 >>>>>>>>> ?????????????????????????????????????????????????????????????????????????????????????/
+                            ###########333 >>>>>>>>> ?????????????????????????????????????????????????????????????????????????????????????/
+                            ###########333 >>>>>>>>> ?????????????????????????????????????????????????????????????????????????????????????/
+                            ###########333 >>>>>>>>> ?????????????????????????????????????????????????????????????????????????????????????/
+                            ###########333 >>>>>>>>> ?????????????????????????????????????????????????????????????????????????????????????/
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
+                    elif shi_can_move(onFocus, onFirst):
+                        if selected2 == 0:
+                            # move selected to selected2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
                 elif selected.type == 'xiang':
                     if selected.hp == 2:
                         if skillReleased:
                             # rush (WIP)
-                            brd.makeMove(Move(onFocus, 'skill', 0, [onFocus], 0))
-                            print(onFocus)
                             Step = 'Second'
-                        elif abs(onFocus[0] - onFirst[0]) == abs(onFocus[1] - onFirst[1]) and abs(onFocus[1] - onFirst[1]) <= 2:
+                        elif xiang2_can_move(onFocus, onFirst):
                             if selected2 == 0:
                                 # move selected to selected2
                                 brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                                 Step = 'Waiting'
-                            elif selected2.owner == 1:
+
+                            elif selected2.owner == 1 and selected2.isActive:
                                 # eat the selected 2
                                 brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                                 Step = 'Waiting'
@@ -211,7 +231,7 @@ while Program:
                             # recover
                             brd.makeMove(Move(onFocus, 'skill', 0, [onFocus], 0))
                             Step = 'Waiting'
-                        elif abs(onFocus[0] - onFirst[0]) == abs(onFocus[1] - onFirst[1]) and abs(onFocus[0] - onFirst[0]) <= 1:
+                        elif xiang1_can_move(onFocus, onFirst):
                             if selected2 == 0:
                                 # move selected to selected2
                                 brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
@@ -230,6 +250,10 @@ while Program:
                             # eat the selected 2
                             brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
+                        elif selected2.owner == 0 and selected2.type == 'ma':
+                            # make chema
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
                 elif selected.type == 'ma':
                     if ma_can_move(onFocus, onFirst):
                         if selected2 == 0:
@@ -240,17 +264,28 @@ while Program:
                             # eat the selected 2
                             brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
+                        elif selected2.owner == 0 and selected2.type == 'che':
+                            # make mache
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
                 elif selected.type == 'pao':
-                    if soldier_can_move(onFocus, onFirst):
+                    if shi_can_move(onFocus, onFirst):
+                        if selected2.owner == 0 and selected2.isActive:
+                            # select bomb (WIP)
+                            Step = 'Second'
+                    elif soldier_can_move(onFocus, onFirst):
                         if selected2 == 0:
                             # move selected to selected2
                             brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
-                        elif selected2.owner == 0 and selected2.isActive:
-                            # select bomb (WIP)
-                            Step = 'Second'
                 elif selected.type == 'soldier':
-                    if soldier_can_move(onFocus, onFirst):
+                    if skillReleased:
+                        # sacrisfy
+                        Step = 'Second'
+                    elif selected2.owner == 0 and selected2.type == 'soldier' and selected2.isActive:
+                        # teleport
+                        Step = 'Second'
+                    elif soldier_can_move(onFocus, onFirst):
                         if selected2 == 0:
                             # move selected to selected2
                             brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
@@ -272,85 +307,3 @@ while Program:
     
 pg.quit()
 
-
-"""
-if onFocus != (-1, -1):
-    if onFocus[0] == -1:
-        small_focus = pg.transform.scale(focus, (31, 31))
-        screen.blit(small_focus, coor_of_point(onFocus))
-    else:
-        screen.blit(focus, coor_of_point(onFocus))
-
-brd.render(screen)
-pg.display.update()
-
-for event in pg.event.get():
-    if event.type == pg.QUIT:
-        Program = False
-    if event.type == pg.MOUSEBUTTONDOWN:
-        mouseloc = pg.mouse.get_pos()
-        if onFocus == nearest_point(mouseloc):
-            selected = 0
-            onFocus = (-1, -1)
-        else:
-            selected = brd.stoneOnLocation(nearest_point(mouseloc))
-            onFocus = nearest_point(mouseloc)
-            print(onFocus)
-            print(selected)
-"""
-
-"""
-                elif selected.type == 'shi':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    if onFirst[0] == -1 and onFirst[1] >= 8:
-                        # relive
-                        a = 1
-
-                elif selected.type == 'swordman':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    if selected2.owner == 1:
-                        # kill
-                        a = 1
-"""
-# Move(location, action, dest, objects, summon):
-
-
-"""
-                elif selected.type == 'che':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.owner == 1:
-                        # eat the selected 2
-                    elif selected2.owner == 0 and selected2.type == 'ma':
-                        # make mache
-
-                elif selected.type == 'ma':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.owner == 1:
-                        # eat the selected 2
-                    elif selected2.owner == 0 and selected2.type == 'che':
-                        # make mache
-
-                elif selected.type == 'pao':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.owner == 0:
-                        # use the seleted2 as a bomb
-
-                elif selected.type == 'soldier':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.owner == 1:
-                        # eat the selected 2
-                    elif selected2.owner == 0 and selected2.type == 'soldier':
-                        # teleport the seleted2
-"""
