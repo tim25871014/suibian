@@ -124,6 +124,8 @@ while Program:
         word_player.render(screen)
 
         if Step == 'Waiting':
+            onFocus = (-1, -1)
+            onFirst = (-1, -1)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
@@ -156,7 +158,7 @@ while Program:
                     selected2 = brd.stoneOnLocation(nearest_point(mouseloc))
                     onFirst = nearest_point(mouseloc)
 
-            if onFocus[0] != -1 or onFocus[1] != -1:
+            if onFirst[0] != -1 or onFirst[1] != -1:
 
                 if selected.type == 'king':
                     if selected2 == 0:

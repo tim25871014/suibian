@@ -1,10 +1,9 @@
 import pygame
-
+from gameplay import *
 class Sit():
     def __init__(self):
         self.stage = 0
-        self.board = [[],[]]
-        self.step = [((0,0),(0,0)),((0,0),(0,0))]
+        self.board = [ChessBoard(),ChessBoard()]
         """
         0 -> one player
         1 -> two players
