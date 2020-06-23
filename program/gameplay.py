@@ -176,14 +176,14 @@ class ChessBoard:
                         self.kill((move.dest[0]-1,move.dest[1]),move.location)
                     if self.inside((move.dest[0]+1,move.dest[1])):
                         self.kill((move.dest[0]+1,move.dest[1]),move.location)
-        else:#走或吃
+        else:#走或吃或疊
             nx = (move.dest[0] - move.location[0])
             ny = (move.dest[1] - move.location[1])
             if nx != 0:
                 nx /= abs(nx)
             if ny != 0:
                 ny /= abs(ny)
-            if move.dest in self.typeOnLocation:#吃
+            if move.dest in self.typeOnLocation and self.typeOnLocation[move.dest].owner != self.typeOnLocation[move.location].owner:#吃
                 if st.type == 'king':
                     if self.typeOnLocation[move.dest].owner == st.owner:
                         self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
@@ -222,10 +222,18 @@ class ChessBoard:
                 else:
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
-            else:#走
+            elif move.dest not in self.typeOnLocation:#走
                 self.transfer(move.location,move.dest)
-            
-
+            else:#疊
+                if st.type == 'soldier':
+                    self.typeOnLocation[move.dest].hp += 1
+                    del self.typeOnLocation[move.location]
+                elif st.type == 'ma':
+                    self.typeOnLocation[move.dest].type = 'mache'
+                    del self.typeOnLocation[move.location]
+                elif st.type == 'che':
+                    self.typeOnLocation[move.dest].type = 'chema'
+                    del self.typeOnLocation[move.location]
     def isWin(self):
         a = 1
 
