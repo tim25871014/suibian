@@ -3,6 +3,7 @@ from elements import *
 from gameplay import *
 from network import *
 from positioning import *
+from moveRules import *
 
 # settings
 FPS = 60
@@ -23,6 +24,7 @@ single = StartingButton('single.png', 'single_act.png', 44, 380)
 rules = StartingButton('rules.png', 'rules_act.png', 44, 490)
 hintbox = MessageBox('entercode.png', 44, 240)
 hintcancel = RoundButton('cross.png', 'cross_act.png', 50, 241)
+skill = SkillButton('skill.png', 'skill.png', 50, 590)
 word_waiting = MessageBox('word_waiting.png', 113, 14)
 word_opponent = MessageBox('word_opponent.png', 113, 14)
 word_player = MessageBox('word_player.png', 262, 594)
@@ -33,6 +35,7 @@ textbox = TextBox(140, 459)
 brd = ChessBoard()
 isFirst = False
 isYourTurn = True
+skillReleased = False
 selected = 0
 selected2 = 0
 onFocus = (-1, -1)
@@ -126,9 +129,11 @@ while Program:
         if Step == 'Waiting':
             onFocus = (-1, -1)
             onFirst = (-1, -1)
+            skillReleased = False
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
+            brd.makeMove(Move((-1, -1), 'no', 0, [], 0))
             Step = 'Focus'
 
         elif Step == 'Focus':
@@ -140,9 +145,10 @@ while Program:
                     selected = brd.stoneOnLocation(nearest_point(mouseloc))
                     onFocus = nearest_point(mouseloc)
             if onFocus[0] != -1 and selected != 0 and (selected.owner == 0 or not selected.isActive):
-                if selected.type == 'back':
+                if not selected.isActive:
                     a = 1
                     # open the covered stone
+                    brd.makeMove(Move(onFocus, 'no', 0, [], 0))
                     Step = 'Waiting'
                 else:
                     Step = 'First'
@@ -155,41 +161,109 @@ while Program:
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
+                    skillReleased = skill.isInArea(mouseloc)
                     selected2 = brd.stoneOnLocation(nearest_point(mouseloc))
                     onFirst = nearest_point(mouseloc)
+            
+            skill.render(screen)
 
-            if onFirst[0] != -1 or onFirst[1] != -1:
+            if onFirst == onFocus:
+                onFocus = (-1, -1)
+                onFirst = (-1, -1)
+                skillReleased = False
+                Step = 'Focus'
+
+            if onFirst[0] != -1 or onFirst[1] != -1 or skillReleased:
 
                 if selected.type == 'king':
-                    if selected2 == 0:
-                        # move selected to selected2
-                        Step = 'Waiting'
-                    elif selected2.type == 'back':
-                        # eat the covered stone 
-                        Step = 'Waiting'
-                    elif selected2.owner == 1:
-                        # eat the selected2
-                        Step = 'Waiting'
+                    if che_can_move(onFocus, onFirst):
+                        if selected2 == 0:
+                            # move selected to selected2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
+                        elif not selected2.inActive:
+                            # eat the covered stone
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
+                        elif selected2.owner == 1:
+                            # eat the selected2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
 
                 elif selected.type == 'xiang':
                     if selected.hp == 2:
+                        if skillReleased:
+                            # rush (WIP)
+                            brd.makeMove(Move(onFocus, 'skill', 0, [onFocus], 0))
+                            print(onFocus)
+                            Step = 'Second'
+                        elif abs(onFocus[0] - onFirst[0]) == abs(onFocus[1] - onFirst[1]) and abs(onFocus[1] - onFirst[1]) <= 2:
+                            if selected2 == 0:
+                                # move selected to selected2
+                                brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                                Step = 'Waiting'
+                            elif selected2.owner == 1:
+                                # eat the selected 2
+                                brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                                Step = 'Waiting'
+                    elif selected.hp == 1:
+                        if skillReleased:
+                            # recover
+                            brd.makeMove(Move(onFocus, 'skill', 0, [onFocus], 0))
+                            Step = 'Waiting'
+                        elif abs(onFocus[0] - onFirst[0]) == abs(onFocus[1] - onFirst[1]) and abs(onFocus[0] - onFirst[0]) <= 1:
+                            if selected2 == 0:
+                                # move selected to selected2
+                                brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                                Step = 'Waiting'
+                            elif selected2.owner == 1 and selected2.isActive:
+                                # eat the selected 2
+                                brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                                Step = 'Waiting'
+                elif selected.type == 'che':
+                    if che_can_move(onFocus, onFirst, brd):
                         if selected2 == 0:
                             # move selected to selected2
-                            brd.makeMove(Move(onFocus, 'no', onFirst, [], []))
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
-                        elif selected2.owner == 1:
+                        elif selected2.owner == 1 and selected2.isActive:
                             # eat the selected 2
-                            brd.makeMove(Move(onFocus, 'no', onFirst, [], []))
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
-                    else:
+                elif selected.type == 'ma':
+                    if ma_can_move(onFocus, onFirst):
                         if selected2 == 0:
                             # move selected to selected2
-                            brd.makeMove(Move(onFocus, 'no', onFirst, [], []))
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
-                        elif selected2.owner == 1:
+                        elif selected2.owner == 1 and selected2.isActive:
                             # eat the selected 2
-                            brd.makeMove(Move(onFocus, 'no', onFirst, [], []))
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
+                elif selected.type == 'pao':
+                    if soldier_can_move(onFocus, onFirst):
+                        if selected2 == 0:
+                            # move selected to selected2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
+                        elif selected2.owner == 0 and selected2.isActive:
+                            # select bomb (WIP)
+                            Step = 'Second'
+                elif selected.type == 'soldier':
+                    if soldier_can_move(onFocus, onFirst):
+                        if selected2 == 0:
+                            # move selected to selected2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
+                        elif selected2.owner == 1 and selected2.isActive:
+                            # eat the selected 2
+                            brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
+                            Step = 'Waiting'
+
+        elif Step == 'Second':
+             for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    Program = False
 
         brd.render(screen)
         pg.display.update()
