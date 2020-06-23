@@ -78,7 +78,7 @@ class ChessBoard:
         if self.typeOnLocation[locate].type == 'soldier':
             self.deathCount[st.type] += 1
         if self.typeOnLocation[locate].hp == 0:
-            kill(self,locate,source)
+            self.kill(locate,source)
             return True
         return False
     def open(self, locate):#翻開一顆暗棋
@@ -118,13 +118,13 @@ class ChessBoard:
                 else:#衝撞
                     nx = (move.dest[0] - move.location[0])/2
                     ny = (move.dest[1] - move.location[1])/2
-                    if inside((move.dest[0],move.dest[1])):
+                    if self.inside((move.dest[0],move.dest[1])):
                         self.kill((move.dest[0],move.dest[1]),move.dest)
-                    if inside((move.dest[0]+nx,move.dest[1])):
+                    if self.inside((move.dest[0]+nx,move.dest[1])):
                         self.kill((move.dest[0]+nx,move.dest[1]),move.dest)
-                    if inside((move.dest[0],move.dest[1]+ny)):
+                    if self.inside((move.dest[0],move.dest[1]+ny)):
                         self.kill((move.dest[0],move.dest[1]+ny),move.dest)
-                    if inside((move.dest[0]+nx,move.dest[1]+ny)):
+                    if self.inside((move.dest[0]+nx,move.dest[1]+ny)):
                         self.kill((move.dest[0]+nx,move.dest[1]+ny),move.dest)
                     self.transfer(move.location,move.dest)
                     self.hurt(move.dest,move.dest)
@@ -150,18 +150,18 @@ class ChessBoard:
                 nx = (move.dest[0] - move.location[0])/abs((move.dest[0] - move.location[0]))
                 ny = (move.dest[1] - move.location[1])/abs((move.dest[1] - move.location[1]))
                 self.kill(move.dest,move.location)
-                if inside((move.dest[0]+nx,move.dest[1]+ny)):
+                if self.inside((move.dest[0]+nx,move.dest[1]+ny)):
                     self.kill((move.dest[0]+nx,move.dest[1]+ny),move.location)
                 if nx == 0:
-                    if inside((move.dest[0],move.dest[1]-1)):
+                    if self.inside((move.dest[0],move.dest[1]-1)):
                         self.kill((move.dest[0],move.dest[1]-1),move.location)
-                    if inside((move.dest[0],move.dest[1]+1)):
+                    if self.inside((move.dest[0],move.dest[1]+1)):
                         self.kill((move.dest[0],move.dest[1]+1),move.location)
                 else:
-                    if inside((move.dest[0]-1,move.dest[1])):
+                    if self.inside((move.dest[0]-1,move.dest[1])):
                         self.kill((move.dest[0]-1,move.dest[1]),move.location)
-                    if inside((move.dest[0]+1,move.dest[1])):
-                        self.kill((move.dest[0]+1,move.dest[1]+1),move.location)
+                    if self.inside((move.dest[0]+1,move.dest[1])):
+                        self.kill((move.dest[0]+1,move.dest[1]),move.location)
         else:#走或吃
             nx = (move.dest[0] - move.location[0])/abs((move.dest[0] - move.location[0]))
             ny = (move.dest[1] - move.location[1])/abs((move.dest[1] - move.location[1]))
@@ -205,7 +205,7 @@ class ChessBoard:
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
             else:#走
-                transfer(move.location,move.dest)
+                self.transfer(move.location,move.dest)
             
 
     def isWin(self):
