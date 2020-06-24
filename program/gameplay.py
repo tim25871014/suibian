@@ -43,12 +43,18 @@ class ChessBoard:
             (7, 9): Stone('xiang', 2, 0, True)
         } # map 座標 -> Stone
         self.shiNum = [0,0]
-        self.xianRecover = (-1,-1)
+        self.xianRecover = [(-1,-1), (-1, -1)]
         self.namelist = ['king', 'shi', 'swordman', 'xiang', 'che', 'ma', 'pao', 'soldier']
         self.deathCount = [
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5},
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5}
         ] # list dict(死亡棋種 -> int)
+    def swap_vision():
+        for s in self.typeOnLocation:
+            s.owner = 1 - s.owner
+        self.deathCount[0], self.deathCount[1] = self.deathCount[1], self.deathCount[0]
+        self.shiNum[0], self.shiNum[1] = self.shiNum[1], self.shiNum[0]
+        self.xianRecover[0], self.xianRecover[1] = self.xianRecover[1], self.xianRecover[0]
     def stoneOnLocation(self, loc):
         if self.typeOnLocation.__contains__(loc):
             return self.typeOnLocation[loc]
@@ -56,7 +62,7 @@ class ChessBoard:
             return 0
     def isLegal(self, move):
         a = 1
-    def kill(self, locate,source):#殺死位於locate的棋，傷害來源是source
+    def kill(self, locate, source): #殺死位於locate的棋，傷害來源是source
         if locate not in self.typeOnLocation:
             return
         st = self.typeOnLocation[locate]
@@ -106,9 +112,9 @@ class ChessBoard:
         return False
 
     def makeMove(self, move):#void
-        if self.xianRecover[0] >= 0:
-            self.typeOnLocation[self.xianRecover].hp += 1
-            self.xianRecover = (-1,-1)
+        if self.xianRecover[0][0] >= 0:
+            self.typeOnLocation[self.xianRecover[0]].hp += 1
+            self.xianRecover[0] = (-1,-1)
         if move.location not in self.typeOnLocation:
             return
         st = self.typeOnLocation[move.location]
@@ -126,7 +132,7 @@ class ChessBoard:
                     self.transfer(move.objects[0],move.dest)
             elif st.type == 'xiang':
                 if move.objects[0] == move.location:# 犧牲自己=回血
-                    self.xianRecover = move.location
+                    self.xianRecover[0] = move.location
                 else:#衝撞
                     nx = (move.dest[0] - move.location[0])/2
                     ny = (move.dest[1] - move.location[1])/2
