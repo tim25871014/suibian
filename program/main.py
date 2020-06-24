@@ -116,12 +116,32 @@ while Program:
         isConnected = network.load() # get 0 if opponent connected
         if(isConnected == 0):
             isFirst = network.load()
+            network.send(brd)
+            Stage = 'WaitingBoard'
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                Program = False
+    elif Stage == 'WaitingBoard':
+        setbackground('board.png', screen)
+        word_opponent.render(screen)
+        word_player.render(screen)
+        pg.display.update()
+        isConnected = network.load() # get 0 if opponent connected
+        if(isConnected == 0):
+            print("ok1")
+            brd = network.load()
+            print("ok2")
             Stage = 'Gamestart'
+            if isFirst:
+                Step = 'Focus'
+            else:
+                Step = 'OppoMove'
+
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 Program = False
     elif Stage == 'Gamestart':
-        # isFirst
+
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
@@ -130,10 +150,15 @@ while Program:
             onFocus = (-1, -1)
             onFirst = (-1, -1)
             skillReleased = False
+            network.send(brd)
+            Step = 'OppoMove'
+        
+        elif Step == 'OppoMove':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
-            brd.makeMove(Move((-1, -1), 'no', 0, [], 0))
+            if network.load() == 0:
+                brd = network.load()
             Step = 'Focus'
 
         elif Step == 'Focus':
@@ -269,15 +294,15 @@ while Program:
                             brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
                 elif selected.type == 'pao':
-                    if shi_can_move(onFocus, onFirst):
-                        if selected2 != 0 and selected2.owner == 0 and selected2.isActive:
-                            # select bomb (WIP)
-                            Step = 'Second'
-                    elif soldier_can_move(onFocus, onFirst):
+                    if soldier_can_move(onFocus, onFirst):
                         if selected2 == 0:
                             # move selected to selected2
                             brd.makeMove(Move(onFocus, 'no', onFirst, [], 0))
                             Step = 'Waiting'
+                    elif shi_can_move(onFocus, onFirst):
+                        if selected2 != 0 and selected2.owner == 0 and selected2.isActive:
+                            # select bomb (WIP)
+                            Step = 'Second'
                 elif selected.type == 'soldier':
                     if skillReleased:
                         # sacrisfy
@@ -299,7 +324,7 @@ while Program:
              for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
-
+        print("ewvwe")
         brd.render(screen)
         pg.display.update()
 
