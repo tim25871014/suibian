@@ -51,24 +51,27 @@ def threaded_client(conn, player):
     conn.send(pickle.dumps(dic[code].board[1-idx]))
     win = 0
     while dic[code].stage != 6:
+        time.sleep(0.3)
         if dic[code].stage == 3 and idx == 0:
             dic[code].board[idx] = pickle.loads(conn.recv(2048))
             dic[code].stage = 5
         elif dic[code].stage != (idx + 4):
-            time.sleep(0.3)
             conn.send(pickle.dumps(-1))
         else:
             conn.send(pickle.dumps(0))
             time.sleep(0.3)
             conn.send(pickle.dumps(dic[code].board[1-idx]))
             dic[code].board[idx] = pickle.loads(conn.recv(2048))
-            t = pickle.loads(conn.recv(2048))
+            #t = pickle.loads(conn.recv(2048))
+            t = 0
             if t == 1:
                 dic[code].stage = 6
                 win = 1
             elif t == 2:
                 dic[code].stage = 6
                 win = 2
+            else:
+                dic[code].stage = 9 - dic[code].stage
     if win == 0:
         conn.send(pickle.dumps(0))
         time.sleep(0.3)

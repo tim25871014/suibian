@@ -158,9 +158,11 @@ while Program:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
+            print("y1")
             if network.load() == 0:
                 brd = network.load()
                 Step = 'Focus'
+            print("y2")
         elif Step == 'Focus':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
