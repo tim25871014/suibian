@@ -49,11 +49,15 @@ class ChessBoard:
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5},
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5}
         ] # list dict(死亡棋種 -> int)
-    def swap_vision():
-        for s in self.typeOnLocation:
+    def swap_vision(self):
+        tmp = {}
+        for idx in self.typeOnLocation:
+            s = self.typeOnLocation[idx]
             s.owner = 1 - s.owner
+            tmp[(idx[0], 9 - idx[1])] = self.typeOnLocation[idx]
         self.deathCount[0], self.deathCount[1] = self.deathCount[1], self.deathCount[0]
         self.shiNum[0], self.shiNum[1] = self.shiNum[1], self.shiNum[0]
+        self.typeOnLocation = tmp
         #self.xianRecover[0], self.xianRecover[1] = self.xianRecover[1], self.xianRecover[0]
     def stoneOnLocation(self, loc):
         if self.typeOnLocation.__contains__(loc):
