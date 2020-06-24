@@ -115,7 +115,7 @@ while Program:
         pg.display.update()
         isConnected = network.load() # get 0 if opponent connected
         if(isConnected == 0):
-            isFirst = network.load()
+            isFirst = 1-network.load()
             network.send(brd)
             Stage = 'WaitingBoard'
         for event in pg.event.get():
@@ -141,7 +141,8 @@ while Program:
             if event.type == pg.QUIT:
                 Program = False
     elif Stage == 'Gamestart':
-
+        print("game started")
+        print(Step)
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
@@ -159,8 +160,7 @@ while Program:
                     Program = False
             if network.load() == 0:
                 brd = network.load()
-            Step = 'Focus'
-
+                Step = 'Focus'
         elif Step == 'Focus':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
