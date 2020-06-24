@@ -84,7 +84,7 @@ class ChessBoard:
         if st.type == 'xiang' and locate == self.xianRecover[1]:
             self.xianRecover[1] = (-1,-1)
 
-    def hurt(self, locate,source):#扣一滴血，回傳是否死亡
+    def hurt(self, locate, source):#扣一滴血，回傳是否死亡
         if locate not in self.typeOnLocation:
             return False
         if self.typeOnLocation[locate].type == 'chema':
@@ -174,7 +174,7 @@ class ChessBoard:
                 self.deathcount[self.typeOnLocation[move.location].owner][move.summon] -= 1
                 self.typeOnLocation[move.dest] = move.summon
             elif st.type == 'swordman':
-                self.kill(move.dest)
+                self.kill(move.dest, move.location)
             elif st.type == 'pao':
                 self.kill(move.objects[0],move.location)
                 nx = (move.dest[0] - move.location[0])
