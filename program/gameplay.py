@@ -54,7 +54,7 @@ class ChessBoard:
             s.owner = 1 - s.owner
         self.deathCount[0], self.deathCount[1] = self.deathCount[1], self.deathCount[0]
         self.shiNum[0], self.shiNum[1] = self.shiNum[1], self.shiNum[0]
-        self.xianRecover[0], self.xianRecover[1] = self.xianRecover[1], self.xianRecover[0]
+        #self.xianRecover[0], self.xianRecover[1] = self.xianRecover[1], self.xianRecover[0]
     def stoneOnLocation(self, loc):
         if self.typeOnLocation.__contains__(loc):
             return self.typeOnLocation[loc]
@@ -77,6 +77,9 @@ class ChessBoard:
         del self.typeOnLocation[locate]
         if st.type == 'king':
             self.kill(source,source)
+        if st.type == 'xiang' and locate == self.xianRecover[1]:
+            self.xianRecover[1] = (-1,-1)
+
     def hurt(self, locate,source):#扣一滴血，回傳是否死亡
         if locate not in self.typeOnLocation:
             return False
@@ -112,9 +115,10 @@ class ChessBoard:
         return False
 
     def makeMove(self, move):#void
-        if self.xianRecover[0][0] >= 0:
+        if self.xianRecover[1][0] >= 0:
             self.typeOnLocation[self.xianRecover[0]].hp += 1
-            self.xianRecover[0] = (-1,-1)
+        self.xianRecover[1] = self.xianRecover[0]
+        self.xianRecover[0] = (-1,-1)
         if move.location not in self.typeOnLocation:
             return
         st = self.typeOnLocation[move.location]
