@@ -33,3 +33,19 @@ def shi_can_move(onFocus, onFirst):
 
 def sword_can_kill(onFocus, onFirst):
     return abs(onFocus[0] - onFirst[0]) + abs(onFocus[1] - onFocus[1]) <= 2
+
+def bomb_can_reach(onFocus, onFirst, onSecond, brd):
+    isLegal = False
+    if onFocus[1] == onSecond[1]:
+        small = min(onFocus[0], onSecond[0]) + 1
+        big = max(onFocus[0], onSecond[0])
+        for i in range(small, big):
+            if brd.stoneOnLocation((i, onFocus[1])) != 0 and (i, onFocus[1]) != onFirst:
+                isLegal = True
+    elif onFocus[0] == onSecond[0]:
+        small = min(onFocus[1], onSecond[1]) + 1
+        big = max(onFocus[1], onSecond[1])
+        for i in range(small, big):
+            if brd.stoneOnLocation((onFocus[0], i)) != 0 and (i, onFocus[1]) != onFirst:
+                isLegal = True
+    return isLegal

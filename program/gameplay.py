@@ -54,7 +54,7 @@ class ChessBoard:
         for idx in self.typeOnLocation:
             s = self.typeOnLocation[idx]
             s.owner = 1 - s.owner
-            tmp[(idx[0], 9 - idx[1])] = self.typeOnLocation[idx]
+            tmp[(8 - idx[0], 9 - idx[1])] = self.typeOnLocation[idx]
         self.deathCount[0], self.deathCount[1] = self.deathCount[1], self.deathCount[0]
         self.shiNum[0], self.shiNum[1] = self.shiNum[1], self.shiNum[0]
         self.typeOnLocation = tmp
@@ -139,7 +139,7 @@ class ChessBoard:
                 else: # 召喚到旁
                     self.transfer(move.objects[0],move.dest)
             elif st.type == 'xiang':
-                if move.objects[0] == move.location:# 犧牲自己=回血
+                if move.objects != [] and move.objects[0] == move.location:# 犧牲自己=回血
                     self.xianRecover[0] = move.location
                 else:#衝撞
                     nx = (move.dest[0] - move.location[0])/2
@@ -171,7 +171,7 @@ class ChessBoard:
                     self.kill((nowx,nowy),move.location)
                 self.transfer(move.location,move.dest)
             elif st.type == 'shi':
-                self.deathcount[self.typeOnLocation[move.location].owner][move.summon] -= 1
+                self.deathCount[self.typeOnLocation[move.location].owner][move.summon.type] -= 1
                 self.typeOnLocation[move.dest] = move.summon
             elif st.type == 'swordman':
                 self.kill(move.dest, move.location)
