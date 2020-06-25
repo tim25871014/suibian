@@ -3,6 +3,8 @@
 # half of the size of the stone = (29, 29)
 # the border of board is from (8.5, 61.5) to ()
 
+# X pygame
+
 def center_of_grave_op(point):
     return (99 + 15.5 + point[1]*28, 49 + 15.5)
 

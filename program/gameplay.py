@@ -1,5 +1,7 @@
 from positioning import *
 
+# X pygame
+
 # 'king', 'shi','swordman', 'xiang', 'che', 'ma', 'pao', 'soldier, 'mache','chema'
 class Stone:
     def __init__(self, stype, hp, owner, isActive):
