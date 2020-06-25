@@ -255,7 +255,14 @@ class ChessBoard:
                     self.typeOnLocation[move.dest].type = 'chema'
                     del self.typeOnLocation[move.location]
     def isWin(self):
-        a = 1
+        if self.deathCount[0]['soldier'] >= 5:
+            return 1
+        if self.deathCount[1]['soldier'] >= 5:
+            return 0
+        for key in self.typeOnLocation:
+            if self.typeOnLocation[key].hp == 5:
+                return self.typeOnLocation[key].owner
+        return -1
 
     def render(self, screen):
         namelist = ['king', 'shi', 'swordman', 'xiang', 'che', 'ma', 'pao', 'soldier']
