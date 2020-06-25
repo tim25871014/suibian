@@ -182,7 +182,9 @@ while Program:
 
         if skillReleased:
             for i in brd.deathCount[0]:
+                print(i)
                 for j in range(0, brd.deathCount[0][i]):
+                    print(j)
                     sum_type = i
                     sum_hp = 1
                     if sum_type == 'xiang':
