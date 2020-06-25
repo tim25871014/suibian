@@ -1,4 +1,3 @@
-import pygame
 from gameplay import *
 class Sit():
     def __init__(self):

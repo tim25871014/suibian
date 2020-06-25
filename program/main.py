@@ -4,6 +4,7 @@ from gameplay import *
 from network import *
 from positioning import *
 from moveRules import *
+from rendering import *
 
 # settings
 FPS = 60
@@ -193,14 +194,14 @@ while Program:
             onFirst = (-1, -1)
             Stage = 'WaitingBoard'
         
-        brd.render(screen)
+        render(brd, screen)
         pg.display.update()
 
     elif Stage == 'WaitingBoard':
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
-        brd.render(screen)
+        render(brd, screen)
         pg.display.update()
         isConnected = network.load() # get 0 if opponent finished
         if(isConnected == 0):
@@ -494,7 +495,7 @@ while Program:
                     brd.makeMove(Move(onFocus, 'skill', onForth, [onThird, onSecond], 0))
                     Step = 'Waiting'
 
-        brd.render(screen)
+        render(brd, screen)
         pg.display.update()
 
     main_clock.tick(FPS)
