@@ -79,6 +79,7 @@ while Program:
                 if single.isActive:
                     ThisFeature = 'WIP'
                     print(ThisFeature)
+
     elif Stage == 'ShowRules':
         screen.blit(background, (0, 0))
         hintbox.render(screen)
@@ -115,6 +116,7 @@ while Program:
                     if len(textbox.text) > 0 and textbox.isvaild():
                         network.send(textbox.text)
                         Stage = 'WaitingConnection'
+
     elif Stage == 'WaitingConnection':
         setbackground('board.png', screen)
         word_waiting.render(screen)
@@ -122,18 +124,19 @@ while Program:
         pg.display.update()
         isConnected = network.load() # get 0 if opponent connected
         if(isConnected == 0):
-            isFirst = 1-network.load()
+            isFirst = 1 - network.load()
             network.send(brd)
             Stage = 'WaitingBoard'
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 Program = False
+
     elif Stage == 'WaitingBoard':
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
         pg.display.update()
-        isConnected = network.load() # get 0 if opponent connected
+        isConnected = network.load() # get 0 if opponent finished
         if(isConnected == 0):
             brd = network.load()
             Stage = 'Gamestart'
@@ -145,6 +148,7 @@ while Program:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 Program = False
+
     elif Stage == 'Gamestart':
         setbackground('board.png', screen)
         word_opponent.render(screen)
@@ -407,8 +411,6 @@ while Program:
                 if king_can_rush(onFocus, onForth):
                     brd.makeMove(Move(onFocus, 'skill', onForth, [onThird, onSecond], 0))
                     Step = 'Waiting'
-
-
 
         brd.render(screen)
         pg.display.update()
