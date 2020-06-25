@@ -1,3 +1,5 @@
+import random
+
 def che_can_move(onFocus, onFirst, brd):
     isLegal = False
     if onFocus[0] == onFirst[0] or onFocus[1] == onFirst[1]:
@@ -61,3 +63,11 @@ def king_can_rush(onFocus, onForth):
     if onFocus == onForth:
         isLegal = False
     return isLegal
+
+def rnd_put(brd):
+    x = random.randint(0, 8)
+    y = random.randint(0, 9)
+    while brd.stoneOnLocation((x, y)) != 0 or x == 4 or y < 6:
+        x = random.randint(0, 8)
+        y = random.randint(0, 9)
+    return x, y

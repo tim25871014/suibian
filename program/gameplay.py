@@ -23,32 +23,18 @@ class Move:
 
 class ChessBoard:
     def __init__(self):
-        self.typeOnLocation = {
-            (0, 7): Stone('ma', 1, 0, False),
-            (4, 8): Stone('soldier', 2, 1, True),
-            (2, 5): Stone('king', 1, 1, False),
-            (6, 3): Stone('swordman', 1, 1, True),
-            (0, 0): Stone('xiang', 1, 0, True),
-            (3, 3): Stone('soldier', 1, 0, True),
-            (3, 5): Stone('pao', 1, 0, True),
-            (8, 0): Stone('king', 1, 0, True),
-            (0, 9): Stone('shi', 1, 0, True),
-            (1, 9): Stone('xiang', 2, 0, True),
-            (2, 9): Stone('che', 1, 0, True),
-            (3, 9): Stone('ma', 1, 0, True),
-            (4, 9): Stone('pao', 1, 0, True),
-            (5, 9): Stone('soldier', 1, 0, True),
-            (6, 9): Stone('swordman', 1, 0, True),
-            (8, 9): Stone('xiang', 2, 0, True),
-            (7, 9): Stone('xiang', 2, 0, True)
-        } # map 座標 -> Stone
+        self.typeOnLocation = {} # map 座標 -> Stone
         self.shiNum = [0,0]
         self.xianRecover = [(-1,-1), (-1, -1)]
         self.namelist = ['king', 'shi', 'swordman', 'xiang', 'che', 'ma', 'pao', 'soldier']
         self.deathCount = [
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5},
-            {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5}
+            {'king': 0, 'shi': 0, 'swordman': 0, 'xiang': 0, 'che': 0, 'ma': 0, 'pao': 0, 'soldier': 0}
         ] # list dict(死亡棋種 -> int)
+    def merge_and_hide(self, other):
+        self.typeOnLocation.update(other.typeOnLocation)
+        for idx in self.typeOnLocation:
+            self.typeOnLocation[idx].isActive = False
     def swap_vision(self):
         tmp = {}
         for idx in self.typeOnLocation:
@@ -119,6 +105,9 @@ class ChessBoard:
         return False
 
     def makeMove(self, move):#void
+        if move.location[0] == -1: # 初始盤面
+            self.deathCount[0][move.summon.type] -= 1
+            self.typeOnLocation[move.dest] = move.summon
         if self.xianRecover[1][0] >= 0:
             self.typeOnLocation[self.xianRecover[0]].hp += 1
         self.xianRecover[1] = self.xianRecover[0]

@@ -125,20 +125,91 @@ while Program:
         isConnected = network.load() # get 0 if opponent connected
         if(isConnected == 0):
             isFirst = 1 - network.load()
-            network.send(brd)
-            Stage = 'WaitingBoard'
+            Stage = 'DesigningBoard'
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 Program = False
+
+    elif Stage == 'DesigningBoard':
+        setbackground('board.png', screen)
+        word_opponent.render(screen)
+        word_player.render(screen)
+        skill.render(screen)
+
+        if Step == 'Focus':
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    Program = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    mouseloc = pg.mouse.get_pos()
+                    selected = brd.stoneOnLocation(nearest_point(mouseloc))
+                    skillReleased = skill.isInArea(mouseloc)
+                    onFocus = nearest_point(mouseloc)
+            if onFocus[0] == -1 and onFocus[1] >= 8:
+                if brd.deathCount[0][type_of_grave(onFocus)] >= 1:
+                    print(onFocus)
+                    Step = 'First'
+
+        elif Step == 'First':
+
+            pic = pg.transform.scale(focus, (31, 31))
+            screen.blit(pic, coor_of_point(onFocus))
+
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    Program = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    mouseloc = pg.mouse.get_pos()
+                    selected2 = brd.stoneOnLocation(nearest_point(mouseloc))
+                    skillReleased = skill.isInArea(mouseloc)
+                    onFirst = nearest_point(mouseloc)
+            
+            if onFirst == onFocus:
+                onFocus = (-1, -1)
+                onFirst = (-1, -1)
+                Step = 'Focus'
+            elif selected2 == 0 and onFirst[0] != 4 and onFirst[0] != -1 and onFirst[1] >= 6:
+                sum_type = type_of_grave(onFocus)
+                sum_hp = 1
+                if sum_type == 'xiang':
+                    sum_hp = 2
+                brd.makeMove(Move(onFocus, 'skill', onFirst, [], Stone(sum_type, sum_hp, 0, True)))
+                onFocus = (-1, -1)
+                onFirst = (-1, -1)
+                Step = 'Focus'
+
+        if skillReleased:
+            for i in brd.deathCount[0]:
+                for j in range(0, brd.deathCount[0][i]):
+                    sum_type = i
+                    sum_hp = 1
+                    if sum_type == 'xiang':
+                        sum_hp = 2
+                    brd.makeMove(Move((-1, 0), 'skill', rnd_put(brd), [], Stone(sum_type, sum_hp, 0, True)))
+
+        tot_grave = 0
+        for i in brd.deathCount[0]:
+            tot_grave += brd.deathCount[0][i]
+        if tot_grave == 0:
+            network.send(brd)
+            onFocus = (-1, -1)
+            onFirst = (-1, -1)
+            Stage = 'WaitingBoard'
+        
+        brd.render(screen)
+        pg.display.update()
 
     elif Stage == 'WaitingBoard':
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
+        brd.render(screen)
         pg.display.update()
         isConnected = network.load() # get 0 if opponent finished
         if(isConnected == 0):
-            brd = network.load()
+            oppo_brd = network.load()
+            oppo_brd.swap_vision()
+            brd.merge_and_hide(oppo_brd)
             Stage = 'Gamestart'
             if isFirst:
                 Step = 'Focus'
