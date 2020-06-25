@@ -66,7 +66,7 @@ class ChessBoard:
             self.deathCount[self.typeOnLocation[locate].owner][st.type] += 1
         del self.typeOnLocation[locate]
         if st.type == 'king':
-            self.kill(source,source)
+            self.kill(source, source)
         if st.type == 'xiang' and locate == self.xianRecover[1]:
             self.xianRecover[1] = (-1,-1)
 

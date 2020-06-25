@@ -149,6 +149,8 @@ while Program:
                 if brd.deathCount[0][type_of_grave(onFocus)] >= 1:
                     print(onFocus)
                     Step = 'First'
+            elif selected != 0 and selected.owner == 0:
+                brd.kill(onFocus, (-1, -1))
 
         elif Step == 'First':
 
@@ -185,12 +187,7 @@ while Program:
                     sum_hp = 1
                     if sum_type == 'xiang':
                         sum_hp = 2
-                    brd.makeMove(Move((-1, 0), 'skill', rnd_put(brd), [], Stone(sum_type, sum_hp, 0, True)))
-
-        tot_grave = 0
-        for i in brd.deathCount[0]:
-            tot_grave += brd.deathCount[0][i]
-        if tot_grave == 0:
+                    brd.makeMove(Move((-1, 0), 'skill', rnd_put(brd), [], Stone(sum_type, sum_hp, 0, False)))
             network.send(brd)
             onFocus = (-1, -1)
             onFirst = (-1, -1)
@@ -243,6 +240,7 @@ while Program:
                 brd = network.load()
                 brd.swap_vision()
                 Step = 'Focus'
+                
         elif Step == 'Focus':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
