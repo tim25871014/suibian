@@ -40,9 +40,13 @@ skillReleased = False
 selected = 0
 selected2 = 0
 selected3 = 0
+selected4 = 0
+selected5 = 0
 onFocus = (-1, -1)
 onFirst = (-1, -1)
 onSecond = (-1, -1)
+onThird = (-1, -1)
+onForth = (-1, -1)
 
 # program
 Program = True
@@ -149,6 +153,9 @@ while Program:
         if Step == 'Waiting':
             onFocus = (-1, -1)
             onFirst = (-1, -1)
+            onSecond = (-1, -1)
+            onThird = (-1, -1)
+            onForth = (-1, -1)
             skillReleased = False
             network.send(brd)
             Step = 'OppoMove'
@@ -337,7 +344,8 @@ while Program:
             
             if onSecond[0] != -1 or onSecond[1] != -1:
                 if selected.type == 'king':
-                    a = 1
+                    if selected3 != 0 and (selected3.isActive == True and selected3.owner == 0):
+                        Step = 'Third'
                 elif selected.type == 'shi':
                     if selected2 == 0:
                         # summon to here
@@ -372,6 +380,34 @@ while Program:
                         if shi_can_move(onFocus, onSecond):
                             brd.makeMove(Move(onFocus, 'skill', onSecond, [onFirst], 0))
                             Step = 'Waiting'
+                
+        elif Step == 'Third' or Step == 'Forth':
+
+            screen.blit(focus, coor_of_point(onFocus))
+            screen.blit(focus2, coor_of_point(onSecond))
+
+            if Step == 'Forth':
+                screen.blit(focus2, coor_of_point(onThird))
+
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    Program = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    mouseloc = pg.mouse.get_pos()
+                    if Step == 'Third':
+                        selected4 = brd.stoneOnLocation(nearest_point(mouseloc))
+                        onThird = nearest_point(mouseloc)
+                    else:
+                        selected5 = brd.stoneOnLocation(nearest_point(mouseloc))
+                        onForth = nearest_point(mouseloc)
+            if Step == 'Third':
+                if selected4 != 0 and (selected4.isActive == True and selected4.owner == 0):
+                    Step = 'Forth'
+            else:
+                if king_can_rush(onFocus, onForth):
+                    brd.makeMove(Move(onFocus, 'skill', onForth, [onThird, onSecond], 0))
+                    Step = 'Waiting'
+
 
 
         brd.render(screen)

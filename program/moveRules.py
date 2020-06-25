@@ -49,3 +49,15 @@ def bomb_can_reach(onFocus, onFirst, onSecond, brd):
             if brd.stoneOnLocation((onFocus[0], i)) != 0 and (i, onFocus[1]) != onFirst:
                 isLegal = True
     return isLegal
+
+def king_can_rush(onFocus, onForth):
+    isLegal = False
+    if(onFocus[0] == onForth[0]):
+        if onForth[1] == 0 or onForth[1] == 9:
+            isLegal = True
+    else:
+        if onForth[0] == 0 or onForth[0] == 8:
+            isLegal = True
+    if onFocus == onForth:
+        isLegal = False
+    return isLegal
