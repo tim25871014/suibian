@@ -182,9 +182,7 @@ while Program:
 
         if skillReleased:
             for i in brd.deathCount[0]:
-                print(i)
                 for j in range(0, brd.deathCount[0][i]):
-                    print(j)
                     sum_type = i
                     sum_hp = 1
                     if sum_type == 'xiang':
@@ -372,6 +370,16 @@ while Program:
                             # make mache
                             brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
                             Step = 'Waiting'
+                elif selected.type == 'mache' or selected.type == 'chema':
+                    if ma_can_move(onFocus, onFirst) or che_can_move(onFocus, onFirst):
+                        if selected2 == 0:
+                            # move selected to selected2
+                            brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
+                            Step = 'Waiting'
+                        elif selected2.owner == 1 and selected2.isActive:
+                            # eat the selected 2
+                            brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
+                            Step = 'Waiting'
                 elif selected.type == 'pao':
                     if soldier_can_move(onFocus, onFirst):
                         if selected2 == 0:
@@ -386,9 +394,6 @@ while Program:
                     if skillReleased and selected.hp >= 2:
                         # sacrisfy
                         Step = 'Second'
-                    elif selected2 != 0 and selected2.owner == 0 and selected2.type == 'soldier' and selected2.isActive:
-                        # teleport
-                        Step = 'Second'
                     elif soldier_can_move(onFocus, onFirst):
                         if selected2 == 0:
                             # move selected to selected2
@@ -398,6 +403,12 @@ while Program:
                             # eat the selected 2
                             brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
                             Step = 'Waiting'
+                        elif selected2.owner == 0 and selected2.isActive and selected2.type == 'soldier':
+                            brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
+                            Step = 'Waiting'
+                    elif selected2 != 0 and selected2.owner == 0 and selected2.type == 'soldier' and selected2.isActive:
+                        # teleport
+                        Step = 'Second'
 
         elif Step == 'Second':
 

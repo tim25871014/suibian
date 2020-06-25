@@ -279,19 +279,19 @@ class ChessBoard:
                 pic = loadimg(prefix + 'ma.png')
                 screen.blit(pic, coor_of_point(p))
                 pic = loadimg(prefix + 'che.png')
-                screen.blit(pic, (coor_of_point(p)[0], coor_of_point(p)[1] + 5))
+                screen.blit(pic, (coor_of_point(p)[0], coor_of_point(p)[1] - 5))
             elif self.typeOnLocation[p].type == 'mache':
                 pic = loadimg(prefix + 'che.png')
                 screen.blit(pic, coor_of_point(p))
                 pic = loadimg(prefix + 'ma.png')
-                screen.blit(pic, (coor_of_point(p)[0], coor_of_point(p)[1] + 5))
+                screen.blit(pic, (coor_of_point(p)[0], coor_of_point(p)[1] - 3))
             elif self.typeOnLocation[p].type == 'soldier':
                 if self.typeOnLocation[p].isActive == False:
                     pic = loadimg(prefix + 'back.png')
                 else:
                     pic = loadimg(prefix + 'soldier.png')
                 for i in range(0, self.typeOnLocation[p].hp):
-                    screen.blit(pic, (coor_of_point(p)[0], coor_of_point(p)[1] + 5*i))
+                    screen.blit(pic, (coor_of_point(p)[0], coor_of_point(p)[1] + 3*i))
             else:
                 picname = self.typeOnLocation[p].type
                 if self.typeOnLocation[p].type == 'swordman':
