@@ -222,8 +222,6 @@ while Program:
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
-        if brd.isWin() != -1:
-            Stage = 'Lobby'
         elif Step == 'Waiting':
             onFocus = (-1, -1)
             onFirst = (-1, -1)
@@ -233,6 +231,8 @@ while Program:
             skillReleased = False
             network.send(brd)
             Step = 'OppoMove'
+            if brd.isWin() != -1:
+                Stage = 'Lobby'
         
         elif Step == 'OppoMove':
             for event in pg.event.get():
@@ -241,6 +241,8 @@ while Program:
             if network.load() == 0:
                 brd = network.load()
                 brd.swap_vision()
+                if brd.isWin() != -1:
+                    Stage = 'Lobby'
                 Step = 'Focus'
                 
         elif Step == 'Focus':
