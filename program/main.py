@@ -222,7 +222,7 @@ while Program:
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
-        if brd.isWin():
+        if brd.isWin() != -1:
             Stage = 'Lobby'
         elif Step == 'Waiting':
             onFocus = (-1, -1)
