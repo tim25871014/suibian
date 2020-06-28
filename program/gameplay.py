@@ -53,7 +53,6 @@ class ChessBoard:
     def kill(self, locate, source): #殺死位於locate的棋，傷害來源是source
         if locate not in self.typeOnLocation:
             return
-        self.peace = 0
         st = self.typeOnLocation[locate]
         if st.isActive == 0 and st.type == 'shi':
             self.shiNum[st.owner] += 1
@@ -72,6 +71,7 @@ class ChessBoard:
     def hurt(self, locate, source):#扣一滴血，回傳是否死亡
         if locate not in self.typeOnLocation:
             return False
+        self.peace = 0
         if self.typeOnLocation[locate].type == 'chema':
             self.typeOnLocation[locate].type = 'ma'
             self.deathCount[self.typeOnLocation[locate].owner]['che'] += 1
@@ -245,7 +245,7 @@ class ChessBoard:
                     self.typeOnLocation[move.dest].type = 'chema'
                     del self.typeOnLocation[move.location]
     def isWin(self):
-        if self.peace >= 5:
+        if self.peace >= 25:
             return 2
         if self.deathCount[0]['soldier'] >= 5:
             return 1
