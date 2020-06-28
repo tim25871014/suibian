@@ -259,6 +259,8 @@ while Program:
                 else:
                     Stage = 'Lose'
             Step = 'OppoMove'
+            if brd.isWin() != -1:
+                Stage = 'Lobby'
         
         elif Step == 'OppoMove':
             for event in pg.event.get():
