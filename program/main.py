@@ -24,6 +24,9 @@ multi = StartingButton('multi.png', 'multi_act.png', 44, 270)
 single = StartingButton('single.png', 'single_act.png', 44, 380)
 rules = StartingButton('rules.png', 'rules_act.png', 44, 490)
 hintbox = MessageBox('entercode.png', 44, 240)
+winbox = MessageBox('win.png', 50, 150)
+losebox = MessageBox('lose.png', 50, 150)
+title = BackButton('title.png', 'title_act.png', 153, 386)
 hintcancel = RoundButton('cross.png', 'cross_act.png', 50, 241)
 skill = SkillButton('skill.png', 'skill.png', 50, 590)
 word_waiting = MessageBox('word_waiting.png', 113, 14)
@@ -217,14 +220,32 @@ while Program:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 Program = False
+            
+    elif Stage == 'Lose' or Stage == 'Win':
+        setbackground('board.png', screen)
+        word_opponent.render(screen)
+        word_player.render(screen)
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                Program = False
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if title.isActive:
+                    Stage = 'Lobby'
+            if event.type == pg.MOUSEMOTION:
+                mouseloc = pg.mouse.get_pos()
+                title.isActive = title.isInArea(mouseloc)
+        if Stage == 'Lose':
+            losebox.render(screen)
+        elif Stage == 'Win':
+            winbox.render(screen)
+        title.render(screen)
+        pg.display.update()
 
     elif Stage == 'Gamestart':
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
-        if brd.isWin() != -1:
-            Stage = 'Lobby'
-        elif Step == 'Waiting':
+        if Step == 'Waiting':
             onFocus = (-1, -1)
             onFirst = (-1, -1)
             onSecond = (-1, -1)
@@ -232,6 +253,11 @@ while Program:
             onForth = (-1, -1)
             skillReleased = False
             network.send(brd)
+            if brd.isWin() != -1:
+                if brd.isWin() == 0:
+                    Stage = 'Win'
+                else:
+                    Stage = 'Lose'
             Step = 'OppoMove'
         
         elif Step == 'OppoMove':
@@ -241,6 +267,11 @@ while Program:
             if network.load() == 0:
                 brd = network.load()
                 brd.swap_vision()
+                if brd.isWin() != -1:
+                    if brd.isWin() == 0:
+                        Stage = 'Win'
+                    else:
+                        Stage = 'Lose'
                 Step = 'Focus'
                 
         elif Step == 'Focus':

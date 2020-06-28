@@ -9,7 +9,7 @@ width, height = 522, 675  # fixed
 screen = pg.display.set_mode((width, height))
 pg.display.set_caption('Wang Zheng Chess DX')
 
-background = pg.image.load('../pictures/design.png').convert_alpha()
+background = pg.image.load('../pictures/design2.png').convert_alpha()
 screen.blit(background, (0, 0))
 pg.display.update()
 
