@@ -237,7 +237,7 @@ while Program:
                 network.send('disconnected')
                 Program = False
             
-    elif Stage == 'Lose' or Stage == 'Win':
+    elif Stage == 'Lose' or Stage == 'Win' or Stage == 'Draw':
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
@@ -254,6 +254,8 @@ while Program:
         if Stage == 'Lose':
             losebox.render(screen)
         elif Stage == 'Win':
+            winbox.render(screen)
+        elif Stage == 'Draw':
             winbox.render(screen)
         title.render(screen)
         pg.display.update()
@@ -273,7 +275,7 @@ while Program:
             if brd.isWin() != -1:
                 if brd.isWin() == 0:
                     Stage = 'Win'
-                else if brd.isWin() == 1:
+                elif brd.isWin() == 1:
                     Stage = 'Lose'
                 else:
                     Stage = 'Draw'
@@ -298,7 +300,7 @@ while Program:
                 if brd.isWin() != -1:
                     if brd.isWin() == 0:
                         Stage = 'Win'
-                    else if brd.isWin() == 1:
+                    elif brd.isWin() == 1:
                         Stage = 'Lose'
                     else:
                         Stage = 'Draw'
@@ -373,7 +375,7 @@ while Program:
                     if sword_can_kill(onFocus, onFirst) and selected2 != 0:
                         if selected2.owner == 1:
                             brd.makeMove(Move(onFocus, 'skill', onFirst, [], 0))
-                            Step = 'WaitinisWin
+                            Step = 'Waiting'
                     elif shi_can_move(onFocus, onFirst):
                         if selected2 == 0:
                             # move selected to selected2
