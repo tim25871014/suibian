@@ -71,3 +71,79 @@ def rnd_put(brd):
         x = random.randint(0, 8)
         y = random.randint(0, 9)
     return x, y
+
+def inside(location):
+    if location[0] >= 0 and location[0] < 9 and location[1] >= 0 and location[1] < 10:
+        return True
+    return False
+
+def nothing(brd, location):
+    if inside(location) and brd.stoneOnLocation(location) == 0:
+        return True
+    return False
+
+def shi_can_summon(brd,location):
+    return nothing((location[0],location[1]-1)) or nothing((location[0],location[1]+1)) or nothing((location[0]-1,location[1])) or nothing((location[0]+1,location[1])) or nothing((location[0]-1,location[1]-1)) or nothing((location[0]-1,location[1]+1)) or nothing((location[0]+1,location[1]-1)) or nothing((location[0]+1,location[1]+1))
+
+def king_can_rush(brd):
+    cnt = 0
+    for i in range(0,9):
+        for j in range(0,10):
+            temp = brd.stoneOnLocation((i,j))
+            if temp != 0 and temp.owner == 0 and temp.isActive == 1:
+                cnt += 1
+    return cnt >= 3
+
+def pao_can_shoot(brd,pao_location,pao_dan):
+    ret = False
+    can_jump = False
+    for i in range(1,10):
+        now = (pao_location[0] + i,pao_location[1])
+        if not inside(now):
+            break
+        if now == pao_dan:
+            continue
+        temp = brd.stoneOnLocation(now)
+        if can_jump and (temp == 0 or (temp.isActive == 1 and temp.owner == 1)):
+            ret = True
+        if brd.stoneOnLocation(now) != 0:
+            can_jump = True
+
+    can_jump = False
+    for i in range(1,10):
+        now = (pao_location[0] - i,pao_location[1])
+        if not inside(now):
+            break
+        if now == pao_dan:
+            continue
+        temp = brd.stoneOnLocation(now)
+        if can_jump and (temp == 0 or (temp.isActive == 1 and temp.owner == 1)):
+            ret = True
+        if brd.stoneOnLocation(now) != 0:
+            can_jump = True
+            
+    can_jump = False
+    for i in range(1,10):
+        now = (pao_location[0],pao_location[1]+i)
+        if not inside(now):
+            break
+        if now == pao_dan:
+            continue
+        temp = brd.stoneOnLocation(now)
+        if can_jump and (temp == 0 or (temp.isActive == 1 and temp.owner == 1)):
+            ret = True
+        if brd.stoneOnLocation(now) != 0:
+            can_jump = True
+
+    can_jump = False
+    for i in range(1,10):
+        now = (pao_location[0],pao_location[1]-i)
+        if not inside(now):
+            break
+        if now == pao_dan:
+            continue
+        temp = brd.stoneOnLocation(now)
+        if can_jump and (temp == 0 or (temp.isActive == 1 and temp.owner == 1)):
+            ret = True
+        if brd.stoneOnLocation(now) != 0:
+            can_jump = True

@@ -84,7 +84,7 @@ def threaded_client(conn, player):
             dic[code].board[idx] = temp
             dic[code].stage = 5
         elif dic[code].stage != (idx + 4):
-             if dic[code].disconnect == 1:
+            if dic[code].disconnect == 1:
                 conn.send(pickle.dumps('disconnect'))
                 del dic[code]
                 return
