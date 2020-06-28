@@ -20,6 +20,8 @@ dic = {}
 
 def threaded_client(conn, player):
     code = pickle.loads(conn.recv(2048))
+    if code == "disconnected":
+        return
     print("ok")
     idx = 0
     if code in dic:
@@ -33,35 +35,77 @@ def threaded_client(conn, player):
         conn.send(pickle.dumps(-1))
         if(dic[code].stage == 1):
             break
-    
+    if dic[code].disconnect == 1:
+        conn.send(pickle.dumps('disconnect'))
+        del dic[code]
+        return
     conn.send(pickle.dumps(0))
     time.sleep(0.3)
+    if dic[code].disconnect == 1:
+        conn.send(pickle.dumps('disconnect'))
+        del dic[code]
+        return
     conn.send(pickle.dumps(idx))
 
     bd = pickle.loads(conn.recv(2048))
+    if bd == "disconnected":
+        dic[code].disconnect = 1
+        return
     dic[code].stage += 1
     dic[code].board[idx] = bd
     while True:
         time.sleep(0.3)
+        if dic[code].disconnect == 1:
+            conn.send(pickle.dumps('disconnect'))
+            del dic[code]
+            return
         conn.send(pickle.dumps(-1))
         if(dic[code].stage == 3):
+            if dic[code].disconnect == 1:
+                conn.send(pickle.dumps('disconnect'))
+                del dic[code]
+                return
             conn.send(pickle.dumps(0))
             break
     time.sleep(0.3)
+    if dic[code].disconnect == 1:
+        conn.send(pickle.dumps('disconnect'))
+        del dic[code]
+        return
     conn.send(pickle.dumps(dic[code].board[1-idx]))
     win = 0
     while dic[code].stage != 6:
         time.sleep(0.3)
         if dic[code].stage == 3 and idx == 0:
-            dic[code].board[idx] = pickle.loads(conn.recv(2048))
+            temp = pickle.loads(conn.recv(2048))
+            if temp == "disconnected":
+                dic[code].disconnect = 1
+                return
+            dic[code].board[idx] = temp
             dic[code].stage = 5
         elif dic[code].stage != (idx + 4):
+             if dic[code].disconnect == 1:
+                conn.send(pickle.dumps('disconnect'))
+                del dic[code]
+                return
             conn.send(pickle.dumps(-1))
         else:
+            if dic[code].disconnect == 1:
+                conn.send(pickle.dumps('disconnect'))
+                del dic[code]
+                return
             conn.send(pickle.dumps(0))
             time.sleep(0.3)
+            if dic[code].disconnect == 1:
+                conn.send(pickle.dumps('disconnect'))
+                del dic[code]
+                return
             conn.send(pickle.dumps(dic[code].board[1-idx]))
-            dic[code].board[idx] = pickle.loads(conn.recv(2048))
+            temp = pickle.loads(conn.recv(2048))
+            if temp == "disconnected":
+                dic[code].disconnect = 1
+                return
+            dic[code].board[idx] = temp
             # t = pickle.loads(conn.recv(2048))
             t = 0
             if t == 1:
