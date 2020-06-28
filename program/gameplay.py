@@ -23,6 +23,7 @@ class ChessBoard:
         self.typeOnLocation = {} # map 座標 -> Stone
         self.shiNum = [0,0]
         self.xianRecover = [(-1,-1), (-1, -1)]
+        self.peace = 0
         self.namelist = ['king', 'shi', 'swordman', 'xiang', 'che', 'ma', 'pao', 'soldier']
         self.deathCount = [
             {'king': 1, 'shi': 1, 'swordman': 1, 'xiang': 2, 'che': 2, 'ma': 2, 'pao': 2, 'soldier': 5},
@@ -52,6 +53,7 @@ class ChessBoard:
     def kill(self, locate, source): #殺死位於locate的棋，傷害來源是source
         if locate not in self.typeOnLocation:
             return
+        self.peace = 0
         st = self.typeOnLocation[locate]
         if st.isActive == 0 and st.type == 'shi':
             self.shiNum[st.owner] += 1
@@ -105,12 +107,14 @@ class ChessBoard:
         if move.location[0] == -1: # 初始盤面
             self.deathCount[0][move.summon.type] -= 1
             self.typeOnLocation[move.dest] = move.summon
+            return
         if self.xianRecover[1][0] >= 0:
             self.typeOnLocation[self.xianRecover[0]].hp += 1
         self.xianRecover[1] = self.xianRecover[0]
         self.xianRecover[0] = (-1,-1)
         if move.location not in self.typeOnLocation:
             return
+        self.peace += 1
         st = self.typeOnLocation[move.location]
         
         if st.isActive == 0: #翻棋
@@ -241,6 +245,8 @@ class ChessBoard:
                     self.typeOnLocation[move.dest].type = 'chema'
                     del self.typeOnLocation[move.location]
     def isWin(self):
+        if self.peace >= 25:
+            return 2
         if self.deathCount[0]['soldier'] >= 5:
             return 1
         if self.deathCount[1]['soldier'] >= 5:

@@ -273,12 +273,12 @@ while Program:
             if brd.isWin() != -1:
                 if brd.isWin() == 0:
                     Stage = 'Win'
-                else:
+                else if brd.isWin() == 1:
                     Stage = 'Lose'
+                else:
+                    Stage = 'Draw'
                 network.send('disconnected')
             Step = 'OppoMove'
-            if brd.isWin() != -1:
-                Stage = 'Lobby'
         
         elif Step == 'OppoMove':
             for event in pg.event.get():
@@ -298,8 +298,10 @@ while Program:
                 if brd.isWin() != -1:
                     if brd.isWin() == 0:
                         Stage = 'Win'
-                    else:
+                    else if brd.isWin() == 1:
                         Stage = 'Lose'
+                    else:
+                        Stage = 'Draw'
                     network.send('disconnected')
                 Step = 'Focus'
                 
@@ -371,7 +373,7 @@ while Program:
                     if sword_can_kill(onFocus, onFirst) and selected2 != 0:
                         if selected2.owner == 1:
                             brd.makeMove(Move(onFocus, 'skill', onFirst, [], 0))
-                            Step = 'Waiting'
+                            Step = 'WaitinisWin
                     elif shi_can_move(onFocus, onFirst):
                         if selected2 == 0:
                             # move selected to selected2
