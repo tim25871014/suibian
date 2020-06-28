@@ -25,6 +25,7 @@ single = StartingButton('single.png', 'single_act.png', 44, 380)
 rules = StartingButton('rules.png', 'rules_act.png', 44, 490)
 hintbox = MessageBox('entercode.png', 44, 240)
 winbox = MessageBox('win.png', 50, 150)
+drawbox = MessageBox('draw.png', 50, 150)
 losebox = MessageBox('lose.png', 50, 150)
 title = BackButton('title.png', 'title_act.png', 153, 386)
 hintcancel = RoundButton('cross.png', 'cross_act.png', 50, 241)
@@ -251,12 +252,13 @@ while Program:
             if event.type == pg.MOUSEMOTION:
                 mouseloc = pg.mouse.get_pos()
                 title.isActive = title.isInArea(mouseloc)
+        render(brd, screen)
         if Stage == 'Lose':
             losebox.render(screen)
         elif Stage == 'Win':
             winbox.render(screen)
         elif Stage == 'Draw':
-            winbox.render(screen)
+            drawbox.render(screen)
         title.render(screen)
         pg.display.update()
 
