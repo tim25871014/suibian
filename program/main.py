@@ -306,7 +306,12 @@ while Program:
                         Stage = 'Lose'
                     else:
                         Stage = 'Draw'
+<<<<<<< HEAD
                     network.send('disconnected')
+=======
+                    #network.send('finished')
+                    network.send('finished')
+>>>>>>> parent of f856f6c... modify win/lose/draw
                 Step = 'Focus'
                 
         elif Step == 'Focus':

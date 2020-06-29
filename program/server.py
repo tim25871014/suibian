@@ -21,12 +21,18 @@ dic = {}
 def threaded_client(conn, player):
     while True:
         code = pickle.loads(conn.recv(2048))
+        print("got code")
+        print(code)
+        if code == "disconnected":
+            return
+        print("ok")
         idx = 0
         if code in dic:
             idx = 1
             dic[code].stage = 1
         else:
             dic[code] = Sit()
+        print(idx)
         while True:
             time.sleep(0.3)
             conn.send(pickle.dumps(-1))
@@ -43,24 +49,40 @@ def threaded_client(conn, player):
         conn.send(pickle.dumps(idx))
 
         bd = pickle.loads(conn.recv(2048))
+        if bd == "disconnected":
+            dic[code].disconnect = 1
+            return
         dic[code].stage += 1
         dic[code].board[idx] = bd
         while True:
             time.sleep(0.3)
+            if dic[code].disconnect == 1:
+                conn.send(pickle.dumps('disconnect'))
+                del dic[code]
+                return
             conn.send(pickle.dumps(-1))
             if(dic[code].stage == 3):
+                if dic[code].disconnect == 1:
+                    conn.send(pickle.dumps('disconnect'))
+                    del dic[code]
+                    return
                 conn.send(pickle.dumps(0))
                 break
         time.sleep(0.3)
+        if dic[code].disconnect == 1:
+            conn.send(pickle.dumps('disconnect'))
+            del dic[code]
+            return
         conn.send(pickle.dumps(dic[code].board[1-idx]))
         win = 0
         while dic[code].stage != 6:
             if dic[code].disconnect == 1:
+                #conn.send(pickle.dumps('disconnect'))
                 break
             time.sleep(0.3)
             if dic[code].stage == 3 and idx == 0:
                 temp = pickle.loads(conn.recv(2048))
-                if temp == 'finished':
+                if temp == "disconnected" or temp == 'finished':
                     win = 1
                     dic[code].disconnect = 1
                     break
@@ -82,7 +104,7 @@ def threaded_client(conn, player):
                     break
                 conn.send(pickle.dumps(dic[code].board[1-idx]))
                 temp = pickle.loads(conn.recv(2048))
-                if temp == 'finished':
+                if temp == "disconnected" or temp == 'finished':
                     win = 1
                     dic[code].disconnect = 1
                     break
