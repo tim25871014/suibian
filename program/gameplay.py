@@ -258,7 +258,7 @@ class ChessBoard:
                     self.typeOnLocation[move.dest].type = 'chema'
                     del self.typeOnLocation[move.location]
     def isWin(self):
-        if self.peace >= 5:
+        if self.peace >= 25:
             return 2
         if self.deathCount[0]['soldier'] >= 5:
             return 1
