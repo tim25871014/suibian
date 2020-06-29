@@ -351,7 +351,7 @@ while Program:
             if onFirst[0] != -1 or onFirst[1] != -1 or skillReleased:
 
                 if selected.type == 'king':
-                    if skillReleased and king_can_rush(brd):
+                    if skillReleased and king_can_rush2(brd):
                             # rush (WIP)
                             Step = 'Second'
                     elif che_can_move(onFocus, onFirst, brd):
@@ -441,7 +441,7 @@ while Program:
                             brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
                             Step = 'Waiting'
                 elif selected.type == 'mache' or selected.type == 'chema':
-                    if ma_can_move(onFocus, onFirst) or che_can_move(onFocus, onFirst):
+                    if ma_can_move(onFocus, onFirst) or che_can_move(onFocus, onFirst, brd):
                         if selected2 == 0:
                             # move selected to selected2
                             brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
@@ -451,11 +451,10 @@ while Program:
                             brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
                             Step = 'Waiting'
                 elif selected.type == 'pao':
-                    if soldier_can_move(onFocus, onFirst):
-                        if selected2 == 0:
-                            # move selected to selected2
-                            brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
-                            Step = 'Waiting'
+                    if soldier_can_move(onFocus, onFirst) and selected2 == 0:
+                        # move selected to selected2
+                        brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
+                        Step = 'Waiting'
                     elif shi_can_move(onFocus, onFirst):
                         if selected2 != 0 and selected2.owner == 0 and selected2.isActive and pao_can_shoot(brd,onFocus,onFirst):
                             # select bomb (WIP)
@@ -505,7 +504,7 @@ while Program:
                     if selected3 != 0 and (selected3.isActive == True and selected3.owner == 0):
                         Step = 'Third'
                 elif selected.type == 'shi':
-                    if selected2 == 0:
+                    if selected2 == 0 and shi_can_move(onFocus,onSecond) and selected3 == 0:
                         # summon to here
                         sum_type = type_of_grave(onFirst)
                         sum_hp = 1

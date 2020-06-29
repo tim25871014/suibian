@@ -48,7 +48,7 @@ def bomb_can_reach(onFocus, onFirst, onSecond, brd):
         small = min(onFocus[1], onSecond[1]) + 1
         big = max(onFocus[1], onSecond[1])
         for i in range(small, big):
-            if brd.stoneOnLocation((onFocus[0], i)) != 0 and (i, onFocus[1]) != onFirst:
+            if brd.stoneOnLocation((onFocus[0], i)) != 0 and (onFocus[0], i) != onFirst:
                 isLegal = True
     return isLegal
 
@@ -83,9 +83,9 @@ def nothing(brd, location):
     return False
 
 def shi_can_summon(brd,location):
-    return nothing((location[0],location[1]-1)) or nothing((location[0],location[1]+1)) or nothing((location[0]-1,location[1])) or nothing((location[0]+1,location[1])) or nothing((location[0]-1,location[1]-1)) or nothing((location[0]-1,location[1]+1)) or nothing((location[0]+1,location[1]-1)) or nothing((location[0]+1,location[1]+1))
+    return (nothing(brd,(location[0],location[1]-1)) or nothing(brd,(location[0],location[1]+1)) or nothing(brd,(location[0]-1,location[1])) or nothing(brd,(location[0]+1,location[1])) or nothing(brd,(location[0]-1,location[1]-1)) or nothing(brd,(location[0]-1,location[1]+1)) or nothing(brd,(location[0]+1,location[1]-1)) or nothing(brd,(location[0]+1,location[1]+1)))
 
-def king_can_rush(brd):
+def king_can_rush2(brd):
     cnt = 0
     for i in range(0,9):
         for j in range(0,10):
@@ -147,3 +147,4 @@ def pao_can_shoot(brd,pao_location,pao_dan):
             ret = True
         if brd.stoneOnLocation(now) != 0:
             can_jump = True
+    return ret
