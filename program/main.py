@@ -301,6 +301,7 @@ while Program:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                     network.send('disconnected')
 =======
                     #network.send('finished')
@@ -312,6 +313,9 @@ while Program:
 =======
                     network.send('finished')
 >>>>>>> parent of 352566b... Update main.py
+=======
+                    network.send('disconnected')
+>>>>>>> parent of 7fa9c51... merge and commit
                 Step = 'Focus'
                 
         elif Step == 'Focus':
