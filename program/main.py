@@ -300,11 +300,15 @@ while Program:
                         Stage = 'Draw'
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                     network.send('disconnected')
 =======
                     #network.send('finished')
                     network.send('finished')
 >>>>>>> parent of f856f6c... modify win/lose/draw
+=======
+                    network.send('finished')
+>>>>>>> parent of 352566b... Update main.py
 =======
                     network.send('finished')
 >>>>>>> parent of 352566b... Update main.py
