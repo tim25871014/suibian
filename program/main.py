@@ -249,6 +249,21 @@ while Program:
             if event.type == pg.MOUSEBUTTONDOWN:
                 if title.isActive:
                     Stage = 'Lobby'
+                    brd = ChessBoard()
+                    isFirst = False
+                    isYourTurn = True
+                    skillReleased = False
+                    selected = 0
+                    selected2 = 0
+                    selected3 = 0
+                    selected4 = 0
+                    selected5 = 0
+                    onFocus = (-1, -1)
+                    onFirst = (-1, -1)
+                    onSecond = (-1, -1)
+                    onThird = (-1, -1)
+                    onForth = (-1, -1)
+                    Step = 'Focus'
             if event.type == pg.MOUSEMOTION:
                 mouseloc = pg.mouse.get_pos()
                 title.isActive = title.isInArea(mouseloc)
@@ -281,7 +296,7 @@ while Program:
                     Stage = 'Lose'
                 else:
                     Stage = 'Draw'
-                network.send('disconnected')
+                
             Step = 'OppoMove'
         
         elif Step == 'OppoMove':
@@ -306,7 +321,8 @@ while Program:
                         Stage = 'Lose'
                     else:
                         Stage = 'Draw'
-                    network.send('disconnected')
+                    #network.send('finished')
+                    network.send('finished')
                 Step = 'Focus'
                 
         elif Step == 'Focus':
