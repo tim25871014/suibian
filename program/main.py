@@ -307,8 +307,16 @@ while Program:
                     else:
                         Stage = 'Draw'
 <<<<<<< HEAD
+<<<<<<< HEAD
                     network.send('disconnected')
 =======
+=======
+<<<<<<< HEAD
+                    network.send('disconnected')
+=======
+=======
+>>>>>>> parent of f856f6c... modify win/lose/draw
+>>>>>>> parent of 947de23... merge and commit
                     #network.send('finished')
                     network.send('finished')
 >>>>>>> parent of f856f6c... modify win/lose/draw
