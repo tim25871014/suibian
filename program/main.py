@@ -6,7 +6,7 @@ from positioning import *
 from moveRules import *
 from rendering import *
 
-# settings
+# settings 
 FPS = 60
 pg.init()
 main_clock = pg.time.Clock()
@@ -128,12 +128,18 @@ while Program:
         word_player.render(screen)
         pg.display.update()
         isConnected = network.load() # get 0 if opponent connected
+        if isConnected == 'disconnected':
+            Stage = 'Win'
         if(isConnected == 0):
             t = network.load()
-            isFirst = 1 - t
-            Stage = 'DesigningBoard'
+            if t == 'disconnected':
+                Stage = 'Win'
+            else:
+                isFirst = 1 - t
+                Stage = 'DesigningBoard'
         for event in pg.event.get():
             if event.type == pg.QUIT:
+                network.send('disconnected')
                 Program = False
 
     elif Stage == 'DesigningBoard':
@@ -145,6 +151,7 @@ while Program:
         if Step == 'Focus':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -165,6 +172,7 @@ while Program:
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -209,8 +217,14 @@ while Program:
         render(brd, screen)
         pg.display.update()
         isConnected = network.load() # get 0 if opponent finished
+        if isConnected == 'disconnected':
+            Stage = 'Win'
+            continue
         if(isConnected == 0):
             oppo_brd = network.load()
+            if oppo_brd == 'disconnected':
+                Stage = 'Win'
+                continue
             oppo_brd.swap_vision()
             brd.merge_and_hide(oppo_brd)
             Stage = 'Gamestart'
@@ -221,6 +235,7 @@ while Program:
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
+                network.send('disconnected')
                 Program = False
             
     elif Stage == 'Lose' or Stage == 'Win' or Stage == 'Draw':
@@ -229,25 +244,11 @@ while Program:
         word_player.render(screen)
         for event in pg.event.get():
             if event.type == pg.QUIT:
+                network.send('disconnected')
                 Program = False
             if event.type == pg.MOUSEBUTTONDOWN:
                 if title.isActive:
                     Stage = 'Lobby'
-                    brd = ChessBoard()
-                    isFirst = False
-                    isYourTurn = True
-                    skillReleased = False
-                    selected = 0
-                    selected2 = 0
-                    selected3 = 0
-                    selected4 = 0
-                    selected5 = 0
-                    onFocus = (-1, -1)
-                    onFirst = (-1, -1)
-                    onSecond = (-1, -1)
-                    onThird = (-1, -1)
-                    onForth = (-1, -1)
-                    Step = 'Focus'
             if event.type == pg.MOUSEMOTION:
                 mouseloc = pg.mouse.get_pos()
                 title.isActive = title.isInArea(mouseloc)
@@ -280,16 +281,23 @@ while Program:
                     Stage = 'Lose'
                 else:
                     Stage = 'Draw'
-                
+                network.send('disconnected')
             Step = 'OppoMove'
         
         elif Step == 'OppoMove':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    network.send('disconnected')
                     Program = False
             t = network.load()
+            if t == 'disconnected':
+                Stage = 'Win'
+                continue
             if t == 0:
                 brd = network.load()
+                if brd == 'disconnected':
+                    Stage = 'Win'
+                    continue
                 brd.swap_vision()
                 if brd.isWin() != -1:
                     if brd.isWin() == 0:
@@ -298,12 +306,13 @@ while Program:
                         Stage = 'Lose'
                     else:
                         Stage = 'Draw'
-                    network.send('finished')
+                    network.send('disconnected')
                 Step = 'Focus'
                 
         elif Step == 'Focus':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -323,6 +332,7 @@ while Program:
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -341,7 +351,7 @@ while Program:
             if onFirst[0] != -1 or onFirst[1] != -1 or skillReleased:
 
                 if selected.type == 'king':
-                    if skillReleased and king_can_rush2(brd):
+                    if skillReleased and king_can_rush(brd):
                             # rush (WIP)
                             Step = 'Second'
                     elif che_can_move(onFocus, onFirst, brd):
@@ -375,7 +385,7 @@ while Program:
                             Step = 'Waiting'
                 elif selected.type == 'xiang':
                     if selected.hp == 2:
-                        if skillReleased and (nothing(brd,(onFocus[0]+2,onFocus[1]+2)) or nothing(brd,(onFocus[0]+2,onFocus[1]-2)) or nothing(brd,(onFocus[0]-2,onFocus[1]+2)) or nothing(brd,(onFocus[0]-2,onFocus[1]-2))):
+                        if skillReleased and (nothing((onFocus[0]+2,onFocus[1]+2)) or nothing((onFocus[0]+2,onFocus[1]-2)) or nothing((onFocus[0]-2,onFocus[1]+2)) or nothing((onFocus[0]-2,onFocus[1]-2))):
                             # rush (WIP)
                             Step = 'Second'
                         elif xiang2_can_move(onFocus, onFirst):
@@ -431,7 +441,7 @@ while Program:
                             brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
                             Step = 'Waiting'
                 elif selected.type == 'mache' or selected.type == 'chema':
-                    if ma_can_move(onFocus, onFirst) or che_can_move(onFocus, onFirst, brd):
+                    if ma_can_move(onFocus, onFirst) or che_can_move(onFocus, onFirst):
                         if selected2 == 0:
                             # move selected to selected2
                             brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
@@ -441,10 +451,11 @@ while Program:
                             brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
                             Step = 'Waiting'
                 elif selected.type == 'pao':
-                    if soldier_can_move(onFocus, onFirst) and selected2 == 0:
-                        # move selected to selected2
-                        brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
-                        Step = 'Waiting'
+                    if soldier_can_move(onFocus, onFirst):
+                        if selected2 == 0:
+                            # move selected to selected2
+                            brd.makeMove(Move(onFocus, 'move', onFirst, [], 0))
+                            Step = 'Waiting'
                     elif shi_can_move(onFocus, onFirst):
                         if selected2 != 0 and selected2.owner == 0 and selected2.isActive and pao_can_shoot(brd,onFocus,onFirst):
                             # select bomb (WIP)
@@ -467,7 +478,7 @@ while Program:
                             Step = 'Waiting'
                     elif selected2 != 0 and selected2.owner == 0 and selected2.type == 'soldier' and selected2.isActive:
                         # teleport
-                        if nothing(brd,(onFocus[0]+1,onFocus[1])) or nothing(brd,(onFocus[0]-1,onFocus[1])) or nothing(brd,(onFocus[0],onFocus[1]+1)) or nothing(brd,(onFocus[0],onFocus[1]-1)):
+                        if nothing((onFocus[0]+1,onFocus[1])) or nothing((onFocus[0]-1,onFocus[1])) or nothing((onFocus[0],onFocus[1]+1)) or nothing((onFocus[0],onFocus[1]-1)):
                             Step = 'Second'
 
         elif Step == 'Second':
@@ -482,6 +493,7 @@ while Program:
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -493,7 +505,7 @@ while Program:
                     if selected3 != 0 and (selected3.isActive == True and selected3.owner == 0):
                         Step = 'Third'
                 elif selected.type == 'shi':
-                    if selected2 == 0 and shi_can_move(onFocus,onSecond) and selected3 == 0:
+                    if selected2 == 0:
                         # summon to here
                         sum_type = type_of_grave(onFirst)
                         sum_hp = 1
@@ -537,6 +549,7 @@ while Program:
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
