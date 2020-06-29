@@ -128,18 +128,12 @@ while Program:
         word_player.render(screen)
         pg.display.update()
         isConnected = network.load() # get 0 if opponent connected
-        if isConnected == 'disconnected':
-            Stage = 'Win'
         if(isConnected == 0):
             t = network.load()
-            if t == 'disconnected':
-                Stage = 'Win'
-            else:
-                isFirst = 1 - t
-                Stage = 'DesigningBoard'
+            isFirst = 1 - t
+            Stage = 'DesigningBoard'
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                network.send('disconnected')
                 Program = False
 
     elif Stage == 'DesigningBoard':
@@ -151,7 +145,6 @@ while Program:
         if Step == 'Focus':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -172,7 +165,6 @@ while Program:
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -217,14 +209,8 @@ while Program:
         render(brd, screen)
         pg.display.update()
         isConnected = network.load() # get 0 if opponent finished
-        if isConnected == 'disconnected':
-            Stage = 'Win'
-            continue
         if(isConnected == 0):
             oppo_brd = network.load()
-            if oppo_brd == 'disconnected':
-                Stage = 'Win'
-                continue
             oppo_brd.swap_vision()
             brd.merge_and_hide(oppo_brd)
             Stage = 'Gamestart'
@@ -235,7 +221,6 @@ while Program:
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                network.send('disconnected')
                 Program = False
             
     elif Stage == 'Lose' or Stage == 'Win' or Stage == 'Draw':
@@ -244,7 +229,6 @@ while Program:
         word_player.render(screen)
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                network.send('disconnected')
                 Program = False
             if event.type == pg.MOUSEBUTTONDOWN:
                 if title.isActive:
@@ -302,17 +286,10 @@ while Program:
         elif Step == 'OppoMove':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    network.send('disconnected')
                     Program = False
             t = network.load()
-            if t == 'disconnected':
-                Stage = 'Win'
-                continue
             if t == 0:
                 brd = network.load()
-                if brd == 'disconnected':
-                    Stage = 'Win'
-                    continue
                 brd.swap_vision()
                 if brd.isWin() != -1:
                     if brd.isWin() == 0:
@@ -321,14 +298,12 @@ while Program:
                         Stage = 'Lose'
                     else:
                         Stage = 'Draw'
-                    #network.send('finished')
                     network.send('finished')
                 Step = 'Focus'
                 
         elif Step == 'Focus':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -348,7 +323,6 @@ while Program:
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -508,7 +482,6 @@ while Program:
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
@@ -564,7 +537,6 @@ while Program:
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    network.send('disconnected')
                     Program = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
