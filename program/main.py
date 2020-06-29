@@ -385,7 +385,7 @@ while Program:
                             Step = 'Waiting'
                 elif selected.type == 'xiang':
                     if selected.hp == 2:
-                        if skillReleased and (nothing((onFocus[0]+2,onFocus[1]+2)) or nothing((onFocus[0]+2,onFocus[1]-2)) or nothing((onFocus[0]-2,onFocus[1]+2)) or nothing((onFocus[0]-2,onFocus[1]-2))):
+                        if skillReleased and (nothing(brd,(onFocus[0]+2,onFocus[1]+2)) or nothing(brd,(onFocus[0]+2,onFocus[1]-2)) or nothing(brd,(onFocus[0]-2,onFocus[1]+2)) or nothing(brd,(onFocus[0]-2,onFocus[1]-2))):
                             # rush (WIP)
                             Step = 'Second'
                         elif xiang2_can_move(onFocus, onFirst):
@@ -478,7 +478,7 @@ while Program:
                             Step = 'Waiting'
                     elif selected2 != 0 and selected2.owner == 0 and selected2.type == 'soldier' and selected2.isActive:
                         # teleport
-                        if nothing((onFocus[0]+1,onFocus[1])) or nothing((onFocus[0]-1,onFocus[1])) or nothing((onFocus[0],onFocus[1]+1)) or nothing((onFocus[0],onFocus[1]-1)):
+                        if nothing(brd,(onFocus[0]+1,onFocus[1])) or nothing(brd,(onFocus[0]-1,onFocus[1])) or nothing(brd,(onFocus[0],onFocus[1]+1)) or nothing(brd,(onFocus[0],onFocus[1]-1)):
                             Step = 'Second'
 
         elif Step == 'Second':
