@@ -330,7 +330,18 @@ while Program:
                     selected2 = brd.stoneOnLocation(nearest_point(mouseloc))
                     onFirst = nearest_point(mouseloc)
             
-            skill.render(screen)
+            if selected.type == 'king':
+                if king_can_rush2(brd):
+                    skill.render(screen)
+            elif selected.type == 'xiang':
+                if selected.hp == 1:
+                    skill.render(screen) # recover
+                elif (nothing(brd,(onFocus[0]+2,onFocus[1]+2)) or nothing(brd,(onFocus[0]+2,onFocus[1]-2)) or nothing(brd,(onFocus[0]-2,onFocus[1]+2)) or nothing(brd,(onFocus[0]-2,onFocus[1]-2))):
+                    skill.render(screen) # rush
+            elif selected.type == 'soldier':
+                if selected.hp >= 2:
+                    skill.render(screen)
+
 
             if onFirst == onFocus:
                 onFocus = (-1, -1)
