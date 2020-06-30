@@ -13,7 +13,7 @@ class TextBox:
     def __init__(self, top, left):
         self.validChars = "1234567890"
         self.text = ''
-        self.font = pg.font.Font(None, 100)
+        self.font = pg.font.SysFont('consolas', 70)
         self.rect = (top, left)
         self.limit = 6
     def add_chr(self, char):
@@ -26,7 +26,33 @@ class TextBox:
     def reset(self):
         self.text = ''
     def render(self, screen):
-        self.image = self.font.render(self.text + '|', False, [0, 0, 0])
+        self.image = self.font.render(self.text + '|', True, [0, 0, 0])
+        if self.text == '':
+            screen.blit(self.image, (self.rect[0] - 10, self.rect[1]))
+        else:
+            screen.blit(self.image, self.rect)
+
+class Timer:
+    def __init__(self, top, left, color):
+        self.color = color
+        self.roundTime = 60 # seconds
+        self.initialTime = 300 # seconds
+        self.time = 0
+        self.font = pg.font.SysFont('consolas', 40)
+        self.rect = (top, left)
+    def reset(self):
+        self.time = self.roundTime
+    def reset_long(self):
+        self.time = self.initialTime
+    def decrease(self):
+        self.time -= 1
+        if self.time <= 0:
+            self.time = 0
+    def render(self, screen):
+        text = str(self.time)
+        if len(text) == 1:
+            text = ' ' + text
+        self.image = self.font.render(text, True, self.color)
         screen.blit(self.image, self.rect)
 
 class Button:

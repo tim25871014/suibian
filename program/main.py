@@ -13,6 +13,7 @@ main_clock = pg.time.Clock()
 width, height = 522, 675  # fixed
 screen = pg.display.set_mode((width, height))
 pg.display.set_caption('Wang Zheng Chess DX')
+COUNT = pg.USEREVENT +1
 
 # connection
 network = Network()
@@ -35,7 +36,9 @@ word_opponent = MessageBox('word_opponent.png', 113, 14)
 word_player = MessageBox('word_player.png', 262, 594)
 focus = loadimg('focus.png')
 focus2 = loadimg('focus2.png')
-textbox = TextBox(140, 459)
+timer_pl = Timer(428, 620, [0, 200, 200])
+timer_op = Timer(47, 24, [0, 200, 0])
+textbox = TextBox(145, 459)
 
 # gameplay
 brd = ChessBoard()
@@ -131,6 +134,8 @@ while Program:
         if(isConnected == 0):
             t = network.load()
             isFirst = 1 - t
+            timer_pl.reset_long()
+            pg.time.set_timer(COUNT, 1000)
             Stage = 'DesigningBoard'
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -140,12 +145,15 @@ while Program:
         setbackground('board.png', screen)
         word_opponent.render(screen)
         word_player.render(screen)
+        timer_pl.render(screen)
         skill.render(screen)
 
         if Step == 'Focus':
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
+                if event.type == COUNT:
+                    timer_pl.decrease()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
                     selected = brd.stoneOnLocation(nearest_point(mouseloc))
@@ -166,6 +174,8 @@ while Program:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
+                if event.type == COUNT:
+                    timer_pl.decrease()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
                     selected2 = brd.stoneOnLocation(nearest_point(mouseloc))
@@ -186,7 +196,7 @@ while Program:
                 onFirst = (-1, -1)
                 Step = 'Focus'
 
-        if skillReleased:
+        if skillReleased or timer_pl.time <= 0:
             for i in brd.deathCount[0]:
                 for j in range(0, brd.deathCount[0][i]):
                     sum_type = i
@@ -213,6 +223,8 @@ while Program:
             oppo_brd = network.load()
             oppo_brd.swap_vision()
             brd.merge_and_hide(oppo_brd)
+            timer_op.reset()
+            timer_pl.reset()
             Stage = 'Gamestart'
             if isFirst:
                 Step = 'Focus'
@@ -280,13 +292,18 @@ while Program:
                     Stage = 'Lose'
                 else:
                     Stage = 'Draw'
-                
+            timer_op.reset()
+            pg.time.set_timer(COUNT, 1000)
             Step = 'OppoMove'
+            
         
         elif Step == 'OppoMove':
+            timer_op.render(screen)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
+                if event.type == COUNT:
+                    timer_op.decrease()
             t = network.load()
             if t == 0:
                 brd = network.load()
@@ -299,16 +316,23 @@ while Program:
                     else:
                         Stage = 'Draw'
                     network.send('finished')
+                timer_pl.reset()
+                pg.time.set_timer(COUNT, 1000)
                 Step = 'Focus'
                 
         elif Step == 'Focus':
+            timer_pl.render(screen)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
+                if event.type == COUNT:
+                    timer_pl.decrease()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
                     selected = brd.stoneOnLocation(nearest_point(mouseloc))
                     onFocus = nearest_point(mouseloc)
+            if timer_pl.time <= 0:
+                Step = 'Waiting'
             if onFocus[0] != -1 and selected != 0 and (selected.owner == 0 or not selected.isActive):
                 if not selected.isActive:
                     a = 1
@@ -322,17 +346,21 @@ while Program:
                     Step = 'First'
 
         elif Step == 'First':
+            timer_pl.render(screen)
             screen.blit(focus, coor_of_point(onFocus))
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
+                if event.type == COUNT:
+                    timer_pl.decrease()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
                     skillReleased = skill.isInArea(mouseloc)
                     selected2 = brd.stoneOnLocation(nearest_point(mouseloc))
                     onFirst = nearest_point(mouseloc)
-            
+            if timer_pl.time <= 0:
+                Step = 'Waiting'
             if selected.type == 'king':
                 if king_can_rush2(brd):
                     skill.render(screen)
@@ -485,7 +513,7 @@ while Program:
                             Step = 'Second'
 
         elif Step == 'Second':
-
+            timer_pl.render(screen)
             screen.blit(focus, coor_of_point(onFocus))
 
             if onFirst[0] == -1:
@@ -497,11 +525,14 @@ while Program:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
+                if event.type == COUNT:
+                    timer_pl.decrease()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
                     selected3 = brd.stoneOnLocation(nearest_point(mouseloc))
                     onSecond = nearest_point(mouseloc)
-            
+            if timer_pl.time <= 0:
+                Step = 'Waiting'
             if onSecond[0] != -1 or onSecond[1] != -1:
                 if selected.type == 'king':
                     if selected3 != 0 and (selected3.isActive == True and selected3.owner == 0):
@@ -542,7 +573,7 @@ while Program:
                             Step = 'Waiting'
                 
         elif Step == 'Third' or Step == 'Forth':
-
+            timer_pl.render(screen)
             screen.blit(focus, coor_of_point(onFocus))
             screen.blit(focus2, coor_of_point(onSecond))
 
@@ -552,6 +583,8 @@ while Program:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     Program = False
+                if event.type == COUNT:
+                    timer_pl.decrease()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouseloc = pg.mouse.get_pos()
                     if Step == 'Third':
@@ -560,6 +593,8 @@ while Program:
                     else:
                         selected5 = brd.stoneOnLocation(nearest_point(mouseloc))
                         onForth = nearest_point(mouseloc)
+            if timer_pl.time <= 0:
+                Step = 'Waiting'
             if Step == 'Third':
                 if selected4 != 0 and (selected4.isActive == True and selected4.owner == 0):
                     Step = 'Forth'
