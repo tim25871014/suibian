@@ -8,7 +8,7 @@ class Stone:
         self.type = stype
         self.hp = hp
         self.owner = owner
-        self.isActive = isActive      
+        self.isActive = isActive
 
 class Move:
     def __init__(self, location, action, dest, objects, summon):
@@ -21,6 +21,8 @@ class Move:
 class ChessBoard:
     def __init__(self):
         self.typeOnLocation = {} # map 座標 -> Stone
+        self.lastLocation = [(-1,-1), (-1, -1)]
+        self.steps = [0,0]
         self.shiNum = [0,0]
         self.xianRecover = [(-1,-1), (-1, -1)]
         self.peace = 0
@@ -43,6 +45,8 @@ class ChessBoard:
             tmp[(8 - idx[0], 9 - idx[1])] = self.typeOnLocation[idx]
         self.deathCount[0], self.deathCount[1] = self.deathCount[1], self.deathCount[0]
         self.shiNum[0], self.shiNum[1] = self.shiNum[1], self.shiNum[0]
+        self.steps[0], self.steps[1] = self.steps[1], self.steps[0]
+        self.lastLocation[0], self.lastLocation[1] = self.lastLocation[1], self.lastLocation[0]
         self.typeOnLocation = tmp
         #self.xianRecover[0], self.xianRecover[1] = self.xianRecover[1], self.xianRecover[0]
     def stoneOnLocation(self, loc):
@@ -128,8 +132,10 @@ class ChessBoard:
         
         if st.isActive == 0: #翻棋
             self.open(move.location)
+            self.steps[0] = 0
             return
         if move.action == 'skill': #技能
+            self.steps[0] = 0
             if st.type == 'soldier':
                 if move.objects[0] == move.location: # 犧牲救人
                     self.deathCount[self.typeOnLocation[move.location].owner][st.type] += st.hp
@@ -207,6 +213,7 @@ class ChessBoard:
             if ny != 0:
                 ny /= abs(ny)
             if move.dest in self.typeOnLocation and self.typeOnLocation[move.dest].owner != self.typeOnLocation[move.location].owner:#吃
+                self.steps[0] = 0
                 if st.type == 'king':
                     if self.typeOnLocation[move.dest].owner == st.owner:
                         self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
@@ -247,7 +254,14 @@ class ChessBoard:
                         self.transfer(move.location,move.dest)
             elif move.dest not in self.typeOnLocation:#走
                 self.transfer(move.location,move.dest)
+                if move.location == self.lastLocation[0]:
+                    self.steps[0] += 1
+                else:
+                    self.steps[0] = 1
+                self.lastLocation[0] = move.dest
+                
             else:#疊
+                self.steps[0] = 0
                 if st.type == 'soldier':
                     self.typeOnLocation[move.dest].hp += 1
                     del self.typeOnLocation[move.location]

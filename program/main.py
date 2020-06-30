@@ -315,7 +315,10 @@ while Program:
                     # open the covered stone
                     brd.makeMove(Move(onFocus, 'move', 0, [], 0))
                     Step = 'Waiting'
-                else:
+                elif not (onFocus == brd.lastLocation[0] and brd.steps[0] == 3):
+                    #print(onFocus)
+                    #print(brd.lastLocation[0])
+                    #print(brd.steps[0])
                     Step = 'First'
 
         elif Step == 'First':
