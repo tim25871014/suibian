@@ -20,7 +20,13 @@ dic = {}
 
 def threaded_client(conn, player):
     while True:
-        code = pickle.loads(conn.recv(2048))
+        dc = 0
+        try:
+            code = pickle.loads(conn.recv(2048))
+        except:
+            return
+        print("code")
+        print(code)
         idx = 0
         if code in dic:
             idx = 1
@@ -29,37 +35,102 @@ def threaded_client(conn, player):
             dic[code] = Sit()
         while True:
             time.sleep(0.3)
-            conn.send(pickle.dumps(-1))
             if(dic[code].stage == 1):
                 break
-        if dic[code].disconnect == 1:
-            #conn.send(pickle.dumps('disconnect'))
-            break
-        conn.send(pickle.dumps(0))
+            try:
+                conn.send(pickle.dumps(-1))
+            except:
+                del dic[code]
+                return
+        if dic[code].duan == 1:
+            try:
+                conn.send(pickle.dumps('disconnected'))
+            except:
+                print('888')
+            del dic[code]
+            continue
+            
+        try:
+            conn.send(pickle.dumps(0))
+        except:
+            dic[code].duan = 1
+            return
         time.sleep(0.3)
-        if dic[code].disconnect == 1:
-            #conn.send(pickle.dumps('disconnect'))
-            break
-        conn.send(pickle.dumps(idx))
-
-        bd = pickle.loads(conn.recv(2048))
+        if dic[code].duan == 1:
+            try:
+                conn.send(pickle.dumps('disconnected'))
+            except:
+                print('888')
+            del dic[code]
+            continue
+        try:
+            conn.send(pickle.dumps(idx))
+        except:
+            dic[code].duan = 1
+            return
+        try:
+            bd = pickle.loads(conn.recv(2048))
+        except:
+            dic[code].duan = 1
+            return
         dic[code].stage += 1
         dic[code].board[idx] = bd
         while True:
             time.sleep(0.3)
-            conn.send(pickle.dumps(-1))
+            if dic[code].duan == 1:
+                try:
+                    conn.send(pickle.dumps('disconnected'))
+                except:
+                    print('888')
+                del dic[code]
+                dc = 1
+                break
+            try:
+                conn.send(pickle.dumps(-1))
+            except:
+                dic[code].duan = 1
+                return
             if(dic[code].stage == 3):
-                conn.send(pickle.dumps(0))
+                if dic[code].duan == 1:
+                    try:
+                        conn.send(pickle.dumps('disconnected'))
+                    except:
+                        print('888')
+                    del dic[code]
+                    dc = 1
+                    break
+                try:
+                    conn.send(pickle.dumps(0))
+                except:
+                    dic[code].duan = 1
+                    return
                 break
         time.sleep(0.3)
-        conn.send(pickle.dumps(dic[code].board[1-idx]))
+        if dc == 1:
+            continue
+        if dic[code].duan == 1:
+            try:
+                conn.send(pickle.dumps('disconnected'))
+            except:
+                print('888')
+            del dic[code]
+            continue
+        try:
+            conn.send(pickle.dumps(dic[code].board[1-idx]))
+        except:
+            dic[code].duan = 1
+            return
         win = 0
         while dic[code].stage != 6:
             if dic[code].disconnect == 1:
                 break
             time.sleep(0.3)
             if dic[code].stage == 3 and idx == 0:
-                temp = pickle.loads(conn.recv(2048))
+                try:
+                    temp = pickle.loads(conn.recv(2048))
+                except:
+                    dic[code].duan = 1
+                    return
                 if temp == 'finished':
                     win = 1
                     dic[code].disconnect = 1
@@ -70,18 +141,55 @@ def threaded_client(conn, player):
                 if dic[code].disconnect == 1:
                     #conn.send(pickle.dumps('disconnect'))
                     break
-                conn.send(pickle.dumps(-1))
+                if dic[code].duan == 1:
+                    try:
+                        conn.send(pickle.dumps('disconnected'))
+                    except:
+                        print('888')
+                    
+                    del dic[code]
+                    dc = 1
+                    break
+                try:
+                    conn.send(pickle.dumps(-1))
+                except:
+                    dic[code].duan = 1
+                    return
             else:
                 if dic[code].disconnect == 1:
                     #conn.send(pickle.dumps('disconnect'))
                     break
-                conn.send(pickle.dumps(0))
+                if dic[code].duan == 1:
+                    try:
+                        conn.send(pickle.dumps('disconnected'))
+                    except:
+                        print('888')
+                    del dic[code]
+                    dc = 1
+                    break
+                try:
+                    conn.send(pickle.dumps(0))
+                except:
+                    dic[code].duan = 1
+                    return
                 time.sleep(0.3)
                 if dic[code].disconnect == 1:
                     #conn.send(pickle.dumps('disconnect'))
                     break
-                conn.send(pickle.dumps(dic[code].board[1-idx]))
-                temp = pickle.loads(conn.recv(2048))
+                if dic[code].duan == 1:
+                    try:
+                        conn.send(pickle.dumps('disconnected'))
+                    except:
+                        print('888')
+                    del dic[code]
+                    dc = 1
+                    break
+                try:
+                    conn.send(pickle.dumps(dic[code].board[1-idx]))
+                    temp = pickle.loads(conn.recv(2048))
+                except:
+                    dic[code].duan = 1
+                    return
                 if temp == 'finished':
                     win = 1
                     dic[code].disconnect = 1
@@ -97,6 +205,8 @@ def threaded_client(conn, player):
                     win = 2
                 else:
                     dic[code].stage = 9 - dic[code].stage
+        if dc == 1:
+            continue
         """if win == 0:
             conn.send(pickle.dumps(0))
             time.sleep(0.3)

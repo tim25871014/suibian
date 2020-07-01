@@ -4,6 +4,7 @@ class Sit():
         self.stage = 0
         self.board = [ChessBoard(),ChessBoard()]
         self.disconnect = 0
+        self.duan = 0
         """
         0 -> one player
         1 -> two players

@@ -131,12 +131,17 @@ while Program:
         word_player.render(screen)
         pg.display.update()
         isConnected = network.load() # get 0 if opponent connected
-        if(isConnected == 0):
+        if isConnected == 'disconnected':
+            Stage = 'Win'
+        elif(isConnected == 0):
             t = network.load()
-            isFirst = 1 - t
-            timer_pl.reset_long()
-            pg.time.set_timer(COUNT, 1000)
-            Stage = 'DesigningBoard'
+            if t == 'disconnected':
+                Stage = 'Win'
+            else:
+                isFirst = 1 - t
+                timer_pl.reset_long()
+                pg.time.set_timer(COUNT, 1000)
+                Stage = 'DesigningBoard'
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 Program = False
@@ -219,17 +224,22 @@ while Program:
         render(brd, screen)
         pg.display.update()
         isConnected = network.load() # get 0 if opponent finished
-        if(isConnected == 0):
+        if isConnected == 'disconnected':
+            Stage = 'Win'
+        elif(isConnected == 0):
             oppo_brd = network.load()
-            oppo_brd.swap_vision()
-            brd.merge_and_hide(oppo_brd)
-            timer_op.reset()
-            timer_pl.reset()
-            Stage = 'Gamestart'
-            if isFirst:
-                Step = 'Focus'
+            if oppo_brd == 'disconnected':
+                Stage = 'Win'
             else:
-                Step = 'OppoMove'
+                oppo_brd.swap_vision()
+                brd.merge_and_hide(oppo_brd)
+                timer_op.reset()
+                timer_pl.reset()
+                Stage = 'Gamestart'
+                if isFirst:
+                    Step = 'Focus'
+                else:
+                    Step = 'OppoMove'
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -305,20 +315,25 @@ while Program:
                 if event.type == COUNT:
                     timer_op.decrease()
             t = network.load()
-            if t == 0:
+            if t == 'disconnected':
+                Stage = 'Win'
+            elif t == 0:
                 brd = network.load()
-                brd.swap_vision()
-                if brd.isWin() != -1:
-                    if brd.isWin() == 0:
-                        Stage = 'Win'
-                    elif brd.isWin() == 1:
-                        Stage = 'Lose'
-                    else:
-                        Stage = 'Draw'
-                    network.send('finished')
-                timer_pl.reset()
-                pg.time.set_timer(COUNT, 1000)
-                Step = 'Focus'
+                if brd == 'disconnected':
+                    Stage = 'Win'
+                else:
+                    brd.swap_vision()
+                    if brd.isWin() != -1:
+                        if brd.isWin() == 0:
+                            Stage = 'Win'
+                        elif brd.isWin() == 1:
+                            Stage = 'Lose'
+                        else:
+                            Stage = 'Draw'
+                        network.send('finished')
+                    timer_pl.reset()
+                    pg.time.set_timer(COUNT, 1000)
+                    Step = 'Focus'
                 
         elif Step == 'Focus':
             timer_pl.render(screen)
