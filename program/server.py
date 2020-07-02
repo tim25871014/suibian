@@ -53,7 +53,10 @@ def threaded_client(conn, player):
         try:
             conn.send(pickle.dumps(0))
         except:
-            dic[code].duan = 1
+            if dic[code].duan == 1:
+                del dic[code]
+            else:
+                dic[code].duan = 1
             return
         time.sleep(0.3)
         if dic[code].duan == 1:
@@ -66,12 +69,18 @@ def threaded_client(conn, player):
         try:
             conn.send(pickle.dumps(idx))
         except:
-            dic[code].duan = 1
+            if dic[code].duan == 1:
+                del dic[code]
+            else:
+                dic[code].duan = 1
             return
         try:
             bd = pickle.loads(conn.recv(2048))
         except:
-            dic[code].duan = 1
+            if dic[code].duan == 1:
+                del dic[code]
+            else:
+                dic[code].duan = 1
             return
         dic[code].stage += 1
         dic[code].board[idx] = bd
@@ -88,7 +97,10 @@ def threaded_client(conn, player):
             try:
                 conn.send(pickle.dumps(-1))
             except:
-                dic[code].duan = 1
+                if dic[code].duan == 1:
+                    del dic[code]
+                else:
+                    dic[code].duan = 1
                 return
             if(dic[code].stage == 3):
                 if dic[code].duan == 1:
@@ -102,7 +114,10 @@ def threaded_client(conn, player):
                 try:
                     conn.send(pickle.dumps(0))
                 except:
-                    dic[code].duan = 1
+                    if dic[code].duan == 1:
+                        del dic[code]
+                    else:
+                        dic[code].duan = 1
                     return
                 break
         time.sleep(0.3)
@@ -118,7 +133,10 @@ def threaded_client(conn, player):
         try:
             conn.send(pickle.dumps(dic[code].board[1-idx]))
         except:
-            dic[code].duan = 1
+            if dic[code].duan == 1:
+                del dic[code]
+            else:
+                dic[code].duan = 1
             return
         win = 0
         while dic[code].stage != 6:
@@ -129,7 +147,10 @@ def threaded_client(conn, player):
                 try:
                     temp = pickle.loads(conn.recv(2048))
                 except:
-                    dic[code].duan = 1
+                    if dic[code].duan == 1:
+                        del dic[code]
+                    else:
+                        dic[code].duan = 1
                     return
                 if temp == 'finished':
                     win = 1
@@ -153,7 +174,10 @@ def threaded_client(conn, player):
                 try:
                     conn.send(pickle.dumps(-1))
                 except:
-                    dic[code].duan = 1
+                    if dic[code].duan == 1:
+                        del dic[code]
+                    else:
+                        dic[code].duan = 1
                     return
             else:
                 if dic[code].disconnect == 1:
@@ -170,7 +194,10 @@ def threaded_client(conn, player):
                 try:
                     conn.send(pickle.dumps(0))
                 except:
-                    dic[code].duan = 1
+                    if dic[code].duan == 1:
+                        del dic[code]
+                    else:
+                        dic[code].duan = 1
                     return
                 time.sleep(0.3)
                 if dic[code].disconnect == 1:
@@ -188,7 +215,10 @@ def threaded_client(conn, player):
                     conn.send(pickle.dumps(dic[code].board[1-idx]))
                     temp = pickle.loads(conn.recv(2048))
                 except:
-                    dic[code].duan = 1
+                    if dic[code].duan == 1:
+                        del dic[code]
+                    else:
+                        dic[code].duan = 1
                     return
                 if temp == 'finished':
                     win = 1
