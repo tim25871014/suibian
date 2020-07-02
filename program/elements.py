@@ -97,3 +97,9 @@ class BackButton(Button):
         super().__init__(picture, picture_active, top, left)
     def isInArea(self, loc):
         return self.rect[0]+11 < loc[0] < self.rect[0]+208 and self.rect[1]+5 < loc[1] < self.rect[1]+52
+
+class GiveUpButton(Button):
+    def __init__(self, picture, picture_active, top, left):
+        super().__init__(picture, picture_active, top, left)
+    def isInArea(self, loc):
+        return self.rect[0] < loc[0] < self.rect[0]+92 and self.rect[1] < loc[1] < self.rect[1]+34
