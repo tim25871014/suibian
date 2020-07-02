@@ -81,6 +81,7 @@ while Program:
                 rules.isActive = rules.isInArea(mouseloc)
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if multi.isActive:
+                    textbox.reset()
                     Stage = 'EnterCode'
                 if rules.isActive:
                     Stage = 'ShowRules'
