@@ -103,3 +103,9 @@ class GiveUpButton(Button):
         super().__init__(picture, picture_active, top, left)
     def isInArea(self, loc):
         return self.rect[0] < loc[0] < self.rect[0]+92 and self.rect[1] < loc[1] < self.rect[1]+34
+
+class CheckButton(Button):
+    def __init__(self, picture, picture_active, top, left):
+        super().__init__(picture, picture_active, top, left)
+    def isInArea(self, loc):
+        return self.rect[0]+5 < loc[0] < self.rect[0]+130 and self.rect[1]+2 < loc[1] < self.rect[1]+52
