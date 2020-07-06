@@ -189,22 +189,22 @@ class ChessBoard:
                     nx /= abs(nx)
                 if ny != 0:
                     ny /= abs(ny)
-                self.kill(move.dest,move.location)
-                self.kill((move.dest[0]+nx,move.dest[1]+ny),move.location)
-                """
+                #self.kill(move.dest,move.location)
+                #self.kill((move.dest[0]+nx,move.dest[1]+ny),move.location)
+                
                 self.kill(move.dest,move.location)
                 if self.inside((move.dest[0]+nx,move.dest[1]+ny)):
                     self.kill((move.dest[0]+nx,move.dest[1]+ny),move.location)
                 if nx == 0:
+                    if self.inside((move.dest[0]-1,move.dest[1])):
+                        self.kill((move.dest[0]-1,move.dest[1]),move.location)
+                    if self.inside((move.dest[0]+1,move.dest[1])):
+                        self.kill((move.dest[0]+1,move.dest[1]),move.location)
+                else:
                     if self.inside((move.dest[0],move.dest[1]-1)):
                         self.kill((move.dest[0],move.dest[1]-1),move.location)
                     if self.inside((move.dest[0],move.dest[1]+1)):
                         self.kill((move.dest[0],move.dest[1]+1),move.location)
-                else:
-                    if self.inside((move.dest[0]-1,move.dest[1])):
-                        self.kill((move.dest[0]-1,move.dest[1]),move.location)
-                    if self.inside((move.dest[0]+1,move.dest[1])):
-                        self.kill((move.dest[0]+1,move.dest[1]),move.location)"""
         else:#走或吃或疊
             nx = (move.dest[0] - move.location[0])
             ny = (move.dest[1] - move.location[1])
