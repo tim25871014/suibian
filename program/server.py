@@ -227,6 +227,7 @@ def threaded_client(conn, player):
                 dic[code].board[idx] = temp
                 # t = pickle.loads(conn.recv(2048))
                 t = 0
+                
                 if t == 1:
                     dic[code].stage = 6
                     win = 1

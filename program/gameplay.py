@@ -24,6 +24,7 @@ class ChessBoard:
         self.lastLocation = [(-1,-1), (-1, -1)]
         self.steps = [0,0]
         self.shiNum = [0,0]
+        self.gaveUp = 0
         self.xianRecover = [(-1,-1), (-1, -1)]
         self.peace = 0
         self.namelist = ['king', 'shi', 'swordman', 'xiang', 'che', 'ma', 'pao', 'soldier']

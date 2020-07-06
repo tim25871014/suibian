@@ -306,10 +306,10 @@ while Program:
             onForth = (-1, -1)
             skillReleased = False
             network.send(brd)
-            if brd.isWin() != -1:
+            if brd.isWin() != -1 or brd.gaveUp == 1:
                 if brd.isWin() == 0:
                     Stage = 'Win'
-                elif brd.isWin() == 1:
+                elif brd.isWin() == 1 or brd.gaveUp == 1:
                     Stage = 'Lose'
                 else:
                     Stage = 'Draw'
@@ -334,8 +334,8 @@ while Program:
                     Stage = 'Win'
                 else:
                     brd.swap_vision()
-                    if brd.isWin() != -1:
-                        if brd.isWin() == 0:
+                    if brd.isWin() != -1 or brd.gaveUp == 1:
+                        if brd.isWin() == 0 or brd.gaveUp == 1:
                             Stage = 'Win'
                         elif brd.isWin() == 1:
                             Stage = 'Lose'
@@ -659,8 +659,10 @@ while Program:
             if event.type == pg.MOUSEBUTTONDOWN:
                 if yesbutton.isActive:
                     isGiveup = False
-                    Stage = 'Lose'
-                    network.send('finished') ## QQ 要怎麼弄
+                    """Stage = 'Lose'
+                    network.send('finished') ## QQ 要怎麼弄"""
+                    brd.gaveUp = 1
+                    Step = 'Waiting'
                 if hintcancel2.isActive:
                     isGiveup = False
             if event.type == pg.MOUSEMOTION:
