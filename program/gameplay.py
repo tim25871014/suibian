@@ -22,6 +22,7 @@ class ChessBoard:
     def __init__(self):
         self.typeOnLocation = {} # map 座標 -> Stone
         self.lastLocation = [(-1,-1), (-1, -1)]
+        self.lastUsed[[],[]]
         self.steps = [0,0]
         self.shiNum = [0,0]
         self.gaveUp = 0
@@ -47,6 +48,7 @@ class ChessBoard:
         self.deathCount[0], self.deathCount[1] = self.deathCount[1], self.deathCount[0]
         self.shiNum[0], self.shiNum[1] = self.shiNum[1], self.shiNum[0]
         self.steps[0], self.steps[1] = self.steps[1], self.steps[0]
+        self.lastUsed[0], self.lastUsed[1] = self.lastUsed[1], self.lastUsed[0]
         self.lastLocation[0], self.lastLocation[1] = self.lastLocation[1], self.lastLocation[0]
         self.typeOnLocation = tmp
         #self.xianRecover[0], self.xianRecover[1] = self.xianRecover[1], self.xianRecover[0]
@@ -134,10 +136,13 @@ class ChessBoard:
         if st.isActive == 0: #翻棋
             self.open(move.location)
             self.steps[0] = 0
+            self.lastLocation[0] = move.location
             return
         if move.action == 'skill': #技能
             self.steps[0] = 0
+            
             if st.type == 'soldier':
+                self.lastLocation[0] = move.location
                 if move.objects[0] == move.location: # 犧牲救人
                     self.deathCount[self.typeOnLocation[move.location].owner][st.type] += st.hp
                     self.deathCount[self.typeOnLocation[move.location].owner][move.summon.type] -= 1
@@ -148,6 +153,7 @@ class ChessBoard:
             elif st.type == 'xiang':
                 if move.objects != [] and move.objects[0] == move.location:# 犧牲自己=回血
                     self.xianRecover[0] = move.location
+                    self.lastLocation[0] = move.location
                 else:#衝撞
                     nx = (move.dest[0] - move.location[0])/2
                     ny = (move.dest[1] - move.location[1])/2
@@ -161,6 +167,7 @@ class ChessBoard:
                         self.kill((move.dest[0]+nx,move.dest[1]+ny),move.dest)
                     self.transfer(move.location,move.dest)
                     self.hurt(move.dest,move.dest)
+                    self.lastLocation[0] = move.dest
             elif st.type == 'king':#將衝到指定位置
                 self.kill(move.objects[0],move.location)
                 self.kill(move.objects[1],move.location)
@@ -177,13 +184,17 @@ class ChessBoard:
                     nowy += ny
                     self.kill((nowx,nowy),move.location)
                 self.transfer(move.location,move.dest)
+                self.lastLocation[0] = move.dest
             elif st.type == 'shi':
                 self.deathCount[self.typeOnLocation[move.location].owner][move.summon.type] -= 1
                 self.typeOnLocation[move.dest] = move.summon
+                self.lastLocation[0] = move.location
             elif st.type == 'swordman':
                 self.kill(move.dest, move.location)
+                self.lastLocation[0] = move.location
             elif st.type == 'pao':
                 self.kill(move.objects[0],move.location)
+                self.lastLocation[0] = move.location
                 nx = (move.dest[0] - move.location[0])
                 ny = (move.dest[1] - move.location[1])
                 if nx != 0:
@@ -218,6 +229,7 @@ class ChessBoard:
                 if st.type == 'king':
                     if self.typeOnLocation[move.dest].owner == st.owner:
                         self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
+                        self.lastLocation[0] = (move.dest[0]-nx,move.dest[1]-ny)
                         return
                     die = self.typeOnLocation[move.dest]
                     self.kill(move.dest,move.location)
@@ -225,34 +237,46 @@ class ChessBoard:
                         if die.type == 'shi' and self.shiNum[st.owner] == 0:
                             self.kill(move.location,move.location)
                     self.transfer(move.location,move.dest)
+                    self.lastLocation = move.dest
                 elif st.type == 'che':
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
+                        self.lastLocation = move.dest
                     else:
                         self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
+                        self.lastLocation = (move.dest[0]-nx,move.dest[1]-ny)
                 elif st.type == 'chema' or st.type == 'mache':
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
+                        self.lastLocation = move.dest
                         return
                     elif self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
+                        self.lastLocation = move.dest
                         return
                     self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
+                    self.lastLocation = (move.dest[0]-nx,move.dest[1]-ny)
                 elif st.type == 'soldier':
                     for i in range(0,st.hp):
                         if self.hurt(move.dest,move.location):
                             self.transfer(move.location,move.dest)
+                            self.lastLocation = move.dest
                             return
+                    self.lastLocation = move.location
                 elif st.type == 'xiang' and st.hp == 2:
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
+                        self.lastLocation = move.dest
                         return
                     elif self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
+                        self.lastLocation = move.dest
                         return
+                    self.lastLocation = move.location
                 else:
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
+                        self.lastLocation = move.dest
             elif move.dest not in self.typeOnLocation:#走
                 self.transfer(move.location,move.dest)
                 if move.location == self.lastLocation[0]:
@@ -272,6 +296,7 @@ class ChessBoard:
                 elif st.type == 'che':
                     self.typeOnLocation[move.dest].type = 'chema'
                     del self.typeOnLocation[move.location]
+                self.lastLocation = move.dest
     def isWin(self):
         if self.peace >= 25:
             return 2
