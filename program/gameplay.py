@@ -22,7 +22,7 @@ class ChessBoard:
     def __init__(self):
         self.typeOnLocation = {} # map 座標 -> Stone
         self.lastLocation = [(-1,-1), (-1, -1)]
-        self.lastUsed[[],[]]
+        self.lastUsed = [[],[]]
         self.steps = [0,0]
         self.shiNum = [0,0]
         self.gaveUp = 0
@@ -50,7 +50,9 @@ class ChessBoard:
         self.steps[0], self.steps[1] = self.steps[1], self.steps[0]
         self.lastUsed[0], self.lastUsed[1] = self.lastUsed[1], self.lastUsed[0]
         self.lastLocation[0], self.lastLocation[1] = self.lastLocation[1], self.lastLocation[0]
+        self.lastLocation[1] = (8 - self.lastLocation[1][0], 9 - self.lastLocation[1][1])
         self.typeOnLocation = tmp
+
         #self.xianRecover[0], self.xianRecover[1] = self.xianRecover[1], self.xianRecover[0]
     def stoneOnLocation(self, loc):
         if self.typeOnLocation.__contains__(loc):

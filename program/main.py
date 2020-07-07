@@ -51,6 +51,7 @@ isFirst = False
 isYourTurn = True
 skillReleased = False
 isGiveup = False
+isKeyDown = False
 selected = 0
 selected2 = 0
 selected3 = 0
@@ -344,9 +345,13 @@ while Program:
                         network.send('finished')
                     timer_pl.reset()
                     pg.time.set_timer(COUNT, 1000)
+                    isKeyDown = False
                     Step = 'Focus'
                 
         elif Step == 'Focus':
+            if not isKeyDown:
+                if brd.lastLocation[1] != (-1, -1)
+                    screen.blit(focus, coor_of_point(brd.lastLocation[1]))
             timer_pl.render(screen)
             if not isGiveup:
                 for event in pg.event.get():
@@ -355,6 +360,7 @@ while Program:
                     if event.type == COUNT:
                         timer_pl.decrease()
                     if event.type == pg.MOUSEBUTTONDOWN:
+                        isKeyDown = True
                         mouseloc = pg.mouse.get_pos()
                         selected = brd.stoneOnLocation(nearest_point(mouseloc))
                         if giveup.isInArea(mouseloc):
