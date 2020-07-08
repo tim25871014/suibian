@@ -41,6 +41,7 @@ word_player = MessageBox('word_player.png', 262, 594)
 giveup = GiveUpButton('giveup.png', 'giveup.png', 429, 0)
 focus = loadimg('focus.png')
 focus2 = loadimg('focus2.png')
+oppomove = loadimg('oppomove.png')
 timer_pl = Timer(428, 620, [0, 200, 200])
 timer_op = Timer(47, 24, [0, 200, 0])
 textbox = TextBox(145, 459)
@@ -350,8 +351,8 @@ while Program:
                 
         elif Step == 'Focus':
             if not isKeyDown:
-                if brd.lastLocation[1] != (-1, -1)
-                    screen.blit(focus, coor_of_point(brd.lastLocation[1]))
+                if brd.lastLocation[1] != (-1, -1):
+                    screen.blit(oppomove, coor_of_point(brd.lastLocation[1]))
             timer_pl.render(screen)
             if not isGiveup:
                 for event in pg.event.get():
