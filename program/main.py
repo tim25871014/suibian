@@ -368,6 +368,7 @@ while Program:
                             isGiveup = True
                         onFocus = nearest_point(mouseloc)
             if timer_pl.time <= 0:
+                brd.lastLocation[0] = (-1, -1)
                 Step = 'Waiting'
             if onFocus[0] != -1 and selected != 0 and (selected.owner == 0 or not selected.isActive):
                 if not selected.isActive:
@@ -399,6 +400,7 @@ while Program:
                         selected2 = brd.stoneOnLocation(nearest_point(mouseloc))
                         onFirst = nearest_point(mouseloc)
             if timer_pl.time <= 0:
+                brd.lastLocation[0] = (-1, -1)
                 Step = 'Waiting'
             if selected.type == 'king':
                 if king_can_rush2(brd):
@@ -575,6 +577,7 @@ while Program:
                         onSecond = nearest_point(mouseloc)
 
             if timer_pl.time <= 0:
+                brd.lastLocation[0] = (-1, -1)
                 Step = 'Waiting'
             if onSecond[0] != -1 or onSecond[1] != -1:
                 if selected.type == 'king':
@@ -640,6 +643,7 @@ while Program:
                             selected5 = brd.stoneOnLocation(nearest_point(mouseloc))
                             onForth = nearest_point(mouseloc)
             if timer_pl.time <= 0:
+                brd.lastLocation[0] = (-1, -1)
                 Step = 'Waiting'
             if Step == 'Third':
                 if selected4 != 0 and (selected4.isActive == True and selected4.owner == 0):
@@ -661,6 +665,7 @@ while Program:
             if event.type == COUNT:
                 timer_pl.decrease()
                 if timer_pl.time <= 0:
+                    brd.lastLocation[0] = (-1, -1)
                     Step = 'Waiting'
                     isGiveup = False
             if event.type == pg.MOUSEBUTTONDOWN:

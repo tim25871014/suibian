@@ -49,8 +49,11 @@ class ChessBoard:
         self.shiNum[0], self.shiNum[1] = self.shiNum[1], self.shiNum[0]
         self.steps[0], self.steps[1] = self.steps[1], self.steps[0]
         self.lastUsed[0], self.lastUsed[1] = self.lastUsed[1], self.lastUsed[0]
-        self.lastLocation[0], self.lastLocation[1] = self.lastLocation[1], self.lastLocation[0]
-        self.lastLocation[1] = (8 - self.lastLocation[1][0], 9 - self.lastLocation[1][1])
+        
+        temp = self.lastLocation[0]
+        self.lastLocation[0] = self.lastLocation[1]
+        self.lastLocation[1] = (8 - temp[0], 9 - temp[1])
+        
         self.typeOnLocation = tmp
 
         #self.xianRecover[0], self.xianRecover[1] = self.xianRecover[1], self.xianRecover[0]
@@ -126,9 +129,11 @@ class ChessBoard:
             self.deathCount[0][move.summon.type] -= 1
             self.typeOnLocation[move.dest] = move.summon
             return
-        if self.xianRecover[1][0] >= 0:
-            self.typeOnLocation[self.xianRecover[1]].hp += 1
-        self.xianRecover[1] = self.xianRecover[0]
+        #if self.xianRecover[1][0] >= 0:
+        #    self.typeOnLocation[self.xianRecover[1]].hp += 1
+        self.xianRecover[1] = (8-self.xianRecover[0][0],9-self.xianRecover[0][1])
+        if self.xianRecover[1][0] >= 9:
+            self.xianRecover[1] = (-1,-1)
         self.xianRecover[0] = (-1,-1)
         if move.location not in self.typeOnLocation:
             return
@@ -139,6 +144,8 @@ class ChessBoard:
             self.open(move.location)
             self.steps[0] = 0
             self.lastLocation[0] = move.location
+            if self.xianRecover[1][0] >= 0:
+                self.typeOnLocation[self.xianRecover[1]].hp += 1
             return
         if move.action == 'skill': #技能
             self.steps[0] = 0
@@ -232,6 +239,8 @@ class ChessBoard:
                     if self.typeOnLocation[move.dest].owner == st.owner:
                         self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
                         self.lastLocation[0] = (move.dest[0]-nx,move.dest[1]-ny)
+                        if self.xianRecover[1][0] >= 0:
+                            self.typeOnLocation[self.xianRecover[1]].hp += 1
                         return
                     die = self.typeOnLocation[move.dest]
                     self.kill(move.dest,move.location)
@@ -239,46 +248,56 @@ class ChessBoard:
                         if die.type == 'shi' and self.shiNum[st.owner] == 0:
                             self.kill(move.location,move.location)
                     self.transfer(move.location,move.dest)
-                    self.lastLocation = move.dest
+                    self.lastLocation[0] = move.dest
                 elif st.type == 'che':
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
-                        self.lastLocation = move.dest
+                        self.lastLocation[0] = move.dest
                     else:
                         self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
-                        self.lastLocation = (move.dest[0]-nx,move.dest[1]-ny)
+                        self.lastLocation[0] = (move.dest[0]-nx,move.dest[1]-ny)
                 elif st.type == 'chema' or st.type == 'mache':
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
-                        self.lastLocation = move.dest
+                        self.lastLocation[0] = move.dest
+                        if self.xianRecover[1][0] >= 0:
+                            self.typeOnLocation[self.xianRecover[1]].hp += 1
                         return
                     elif self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
-                        self.lastLocation = move.dest
+                        self.lastLocation[0] = move.dest
+                        if self.xianRecover[1][0] >= 0:
+                            self.typeOnLocation[self.xianRecover[1]].hp += 1
                         return
                     self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
-                    self.lastLocation = (move.dest[0]-nx,move.dest[1]-ny)
+                    self.lastLocation[0] = (move.dest[0]-nx,move.dest[1]-ny)
                 elif st.type == 'soldier':
                     for i in range(0,st.hp):
                         if self.hurt(move.dest,move.location):
                             self.transfer(move.location,move.dest)
-                            self.lastLocation = move.dest
+                            self.lastLocation[0] = move.dest
+                            if self.xianRecover[1][0] >= 0:
+                                self.typeOnLocation[self.xianRecover[1]].hp += 1
                             return
-                    self.lastLocation = move.location
+                    self.lastLocation[0] = move.location
                 elif st.type == 'xiang' and st.hp == 2:
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
-                        self.lastLocation = move.dest
+                        self.lastLocation[0] = move.dest
+                        if self.xianRecover[1][0] >= 0:
+                            self.typeOnLocation[self.xianRecover[1]].hp += 1
                         return
                     elif self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
-                        self.lastLocation = move.dest
+                        self.lastLocation[0] = move.dest
+                        if self.xianRecover[1][0] >= 0:
+                            self.typeOnLocation[self.xianRecover[1]].hp += 1
                         return
-                    self.lastLocation = move.location
+                    self.lastLocation[0] = move.location
                 else:
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
-                        self.lastLocation = move.dest
+                        self.lastLocation[0] = move.dest
             elif move.dest not in self.typeOnLocation:#走
                 self.transfer(move.location,move.dest)
                 if move.location == self.lastLocation[0]:
@@ -298,10 +317,10 @@ class ChessBoard:
                 elif st.type == 'che':
                     self.typeOnLocation[move.dest].type = 'chema'
                     del self.typeOnLocation[move.location]
-                self.lastLocation = move.dest
+                self.lastLocation[0] = move.dest
+        if self.xianRecover[1][0] >= 0:
+            self.typeOnLocation[self.xianRecover[1]].hp += 1
     def isWin(self):
-        if self.peace >= 25:
-            return 2
         if self.deathCount[0]['soldier'] >= 5:
             return 1
         if self.deathCount[1]['soldier'] >= 5:
@@ -309,4 +328,6 @@ class ChessBoard:
         for key in self.typeOnLocation:
             if self.typeOnLocation[key].hp == 5:
                 return self.typeOnLocation[key].owner
+        if self.peace >= 25:
+            return 2
         return -1
