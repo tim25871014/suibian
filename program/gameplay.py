@@ -269,8 +269,11 @@ class ChessBoard:
                         if self.xianRecover[1][0] >= 0:
                             self.typeOnLocation[self.xianRecover[1]].hp += 1
                         return
-                    self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
-                    self.lastLocation[0] = (move.dest[0]-nx,move.dest[1]-ny)
+                    elif move.location[0] == move.dest[0] or move.location[1] == move.dest[1]:
+                        self.transfer(move.location,(move.dest[0]-nx,move.dest[1]-ny))
+                        self.lastLocation[0] = (move.dest[0]-nx,move.dest[1]-ny)
+                    else:
+                        self.lastLocation[0] = move.location
                 elif st.type == 'soldier':
                     for i in range(0,st.hp):
                         if self.hurt(move.dest,move.location):
@@ -298,6 +301,8 @@ class ChessBoard:
                     if self.hurt(move.dest,move.location):
                         self.transfer(move.location,move.dest)
                         self.lastLocation[0] = move.dest
+                    else:
+                        self.lastLocation[0] = move.location
             elif move.dest not in self.typeOnLocation:#走
                 self.transfer(move.location,move.dest)
                 if move.location == self.lastLocation[0]:
