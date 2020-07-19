@@ -6,7 +6,7 @@ import time
 
 server = '127.0.0.1'
 #server = '210.71.78.200'
-port = 5557
+port = 7188
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
